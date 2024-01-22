@@ -44,8 +44,8 @@
                </HBox>
                <Pane prefHeight="200.0" prefWidth="200.0">
                   <children>
-                     <Button fx:id="btnPlay" layoutX="18.0" layoutY="2.0" mnemonicParsing="false" onAction="#btnPlayClick" text="Play" />
-                     <Button fx:id="btnStop" layoutX="56.0" layoutY="2.0" mnemonicParsing="false" onAction="#btnStopClick" text="Stop" />
+                     <Button fx:id="btnPlay" layoutX="18.0" layoutY="2.0" mnemonicParsing="false" onAction="#btnPlayClick" />
+                     <Button fx:id="btnStop" layoutX="56.0" layoutY="2.0" mnemonicParsing="false" onAction="#btnStopClick" />
                   </children>
                </Pane>
             </children>

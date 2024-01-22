@@ -43,6 +43,8 @@ public class PlaylistController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
         arrangePlaylistView();
+
+
     }
 
     /**

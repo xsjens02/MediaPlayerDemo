@@ -50,6 +50,7 @@ public class FileController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
         arrangeTableView();
+
     }
 
     /**
