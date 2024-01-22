@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -48,45 +50,47 @@ public class PlayerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        dbSorting.initializeDB("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\MediaFilesFolder");
+        dbSorting.initializeDB("C:\\Users\\testt\\Desktop\\MediaPlayerDemo\\src\\main\\java\\MediaFilesFolder");
         showListControls(false);
         sliderVolume.setVisible(false);
 
 
         //Set your own absolute path
-        Image imagePause = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\pause.png");
+        Image imagePause = new Image("C:\\Users\\testt\\Desktop\\MediaPlayerDemo\\src\\main\\java\\Icon\\pause.png");
         ImageView imageViewPause = new ImageView(imagePause);
         imageViewPause.setFitHeight(10);
         imageViewPause.setFitWidth(10);
         btnPause.setGraphic(imageViewPause);
 
         //Set your own absolute path
-        Image imagePlay = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\play.png");
+        Image imagePlay = new Image("C:\\Users\\testt\\Desktop\\MediaPlayerDemo\\src\\main\\java\\Icon\\play.png");
         ImageView imageViewPlay = new ImageView(imagePlay);
         imageViewPlay.setFitHeight(10);
         imageViewPlay.setFitWidth(10);
         btnPlay.setGraphic(imageViewPlay);
 
         //Set your own absolute path
-        Image imageStop = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\stop.png");
+        Image imageStop = new Image("C:\\Users\\testt\\Desktop\\MediaPlayerDemo\\src\\main\\java\\Icon\\stop.png");
         ImageView imageViewStop = new ImageView(imageStop);
         imageViewStop.setFitHeight(10);
         imageViewStop.setFitWidth(10);
         btnStop.setGraphic(imageViewStop);
 
         //Set your own absolute path
-        Image imagePrevious = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\previous.png");
+        Image imagePrevious = new Image("C:\\Users\\testt\\Desktop\\MediaPlayerDemo\\src\\main\\java\\Icon\\previous.png");
         ImageView imageViewPrevious = new ImageView(imagePrevious);
         imageViewPrevious.setFitHeight(20);
         imageViewPrevious.setFitWidth(20);
         btnPrevious.setGraphic(imageViewPrevious);
 
         //Set your own absolute path
-        Image imageForward = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
+        Image imageForward = new Image("C:\\Users\\testt\\Desktop\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
         ImageView imageViewForward = new ImageView(imageForward);
         imageViewForward.setFitHeight(20);
         imageViewForward.setFitWidth(20);
         btnNext.setGraphic(imageViewForward);
+
+        borderPane.setOnKeyPressed(this::handleKeyPressPlayPause);
     }
 
     @FXML
@@ -227,6 +231,20 @@ public class PlayerController implements Initializable {
         btnNext.setVisible(showControls);
         btnPrevious.setVisible(showControls);
         lblListOverview.setVisible(showControls);
+    }
+
+
+
+    private void handleKeyPressPlayPause(KeyEvent event) {
+        if (event.getCode() == KeyCode.P || event.getCode() == KeyCode.SPACE) {
+            if (mediaPlaying) {
+                mediaPlaying = false;
+                mediaPlayer.pause();
+            } else {
+                mediaPlaying = true;
+                mediaPlayer.play();
+            }
+        }
     }
 
 }
