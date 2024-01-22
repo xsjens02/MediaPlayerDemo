@@ -7,7 +7,7 @@
 
 <VBox fx:id="vboxParent" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mediaplayerdemo.PlayerController">
    <children>
-      <BorderPane prefHeight="403.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+      <BorderPane fx:id="borderPane" prefHeight="403.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
          <top>
             <MenuBar BorderPane.alignment="CENTER">
               <menus>

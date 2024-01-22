@@ -2,11 +2,13 @@ package com.example.mediaplayerdemo;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class PlayerController implements Initializable {
+    public BorderPane borderPane;
     private Media media;
     private ArrayList<Media> mediaList = new ArrayList<>();
     private int currentMediaIndex = 0;
@@ -49,30 +52,36 @@ public class PlayerController implements Initializable {
         showListControls(false);
         sliderVolume.setVisible(false);
 
+
+        //Set your own absolute path
         Image imagePause = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\pause.png");
         ImageView imageViewPause = new ImageView(imagePause);
         imageViewPause.setFitHeight(10);
         imageViewPause.setFitWidth(10);
         btnPause.setGraphic(imageViewPause);
 
+        //Set your own absolute path
         Image imagePlay = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\play.png");
         ImageView imageViewPlay = new ImageView(imagePlay);
         imageViewPlay.setFitHeight(10);
         imageViewPlay.setFitWidth(10);
         btnPlay.setGraphic(imageViewPlay);
 
+        //Set your own absolute path
         Image imageStop = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\stop.png");
         ImageView imageViewStop = new ImageView(imageStop);
         imageViewStop.setFitHeight(10);
         imageViewStop.setFitWidth(10);
         btnStop.setGraphic(imageViewStop);
 
+        //Set your own absolute path
         Image imagePrevious = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\previous.png");
         ImageView imageViewPrevious = new ImageView(imagePrevious);
         imageViewPrevious.setFitHeight(20);
         imageViewPrevious.setFitWidth(20);
         btnPrevious.setGraphic(imageViewPrevious);
 
+        //Set your own absolute path
         Image imageForward = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
         ImageView imageViewForward = new ImageView(imageForward);
         imageViewForward.setFitHeight(20);
@@ -173,9 +182,12 @@ public class PlayerController implements Initializable {
         mediaView.setMediaPlayer(mediaPlayer);
         mediaPlayer.setAutoPlay(false);
         mediaPlaying = false;
-        //Scene scene = vboxParent.getScene();
-        //mediaView.fitWidthProperty().bind(scene.widthProperty());
-        //mediaView.fitHeightProperty().bind(scene.heightProperty());
+        Scene mediaScene = borderPane.getCenter().getScene();
+        double width = mediaScene.getWidth();
+        double height = mediaScene.getHeight() - 100;
+        mediaView.setFitWidth(width);
+        mediaView.setFitHeight(height);
+
 
         setSliderTime();
     }
