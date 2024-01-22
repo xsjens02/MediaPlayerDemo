@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.media.*?>
+
+<VBox fx:id="vboxParent" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mediaplayerdemo.PlayerController">
+   <children>
+      <BorderPane prefHeight="403.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+         <top>
+            <MenuBar BorderPane.alignment="CENTER">
+              <menus>
+                <Menu mnemonicParsing="false" text="Media">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#onDriveOption" text="Choose from drive" />
+                        <MenuItem mnemonicParsing="false" onAction="#onFolderOption" text="Choose from folder" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Playlist">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#onPlaylistOption" text="Choose playlist" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </top>
+         <center>
+            <MediaView fx:id="mediaView" fitHeight="200.0" fitWidth="200.0" BorderPane.alignment="CENTER" />
+         </center>
+         <bottom>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Slider fx:id="sliderTime" prefHeight="14.0" prefWidth="480.0" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblTime" prefHeight="17.0" prefWidth="83.0" text="Duration 00:00" />
+                     </children>
+                     <padding>
+                        <Insets left="15.0" right="15.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="49.0" prefWidth="600.0" spacing="2.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="btnPause" mnemonicParsing="false" onAction="#onPauseClick" prefHeight="25.0" prefWidth="47.0" text="Pause" />
+                        <Button fx:id="btnPlay" mnemonicParsing="false" onAction="#onPlayClick" prefHeight="25.0" prefWidth="43.0" text="Play" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnStop" mnemonicParsing="false" onAction="#onStopClick" text="Stop" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="71.0" prefWidth="155.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="lblSound" onMouseEntered="#onSoundEnter" onMouseExited="#onSoundExit" prefHeight="17.0" prefWidth="48.0" text="Sound" />
+                              <Slider fx:id="sliderVolume" max="1.0" prefHeight="14.0" prefWidth="142.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="71.0" prefWidth="266.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Button fx:id="btnPrevious" mnemonicParsing="false" onAction="#onPreviousClick" text="Previous" />
+                                    <Button fx:id="btnNext" mnemonicParsing="false" onAction="#onNextClick" text="Next" />
+                                    <Label fx:id="lblListOverview" text="Track 00/00">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                                 <padding>
+                                    <Insets right="15.0" />
+                                 </padding>
+                              </HBox>
+                              <Label fx:id="lblFullScreen" onContextMenuRequested="#onFullScreenClick" text="Full Screen" HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets right="20.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets left="15.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+         </bottom>
+      </BorderPane>
+   </children>
+</VBox>

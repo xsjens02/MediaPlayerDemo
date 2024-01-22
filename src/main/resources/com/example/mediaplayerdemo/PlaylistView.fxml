@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="vboxParent" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="593.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mediaplayerdemo.PlaylistController">
+   <children>
+      <Pane prefHeight="305.0" prefWidth="622.0">
+         <children>
+            <TextField fx:id="txtTitlePrompt" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="217.0" promptText="Insert title for new playlist.." />
+            <ListView fx:id="listViewPlaylist" layoutX="14.0" layoutY="41.0" onMouseClicked="#playlistClick" prefHeight="224.0" prefWidth="280.0" />
+            <ListView fx:id="listViewFile" layoutX="294.0" layoutY="41.0" onMouseClicked="#onFileClick" prefHeight="224.0" prefWidth="280.0" />
+            <Button layoutX="468.0" layoutY="265.0" mnemonicParsing="false" onAction="#onDeleteFileClick" prefHeight="25.0" prefWidth="53.0" text="Delete" />
+            <Button layoutX="168.0" layoutY="265.0" mnemonicParsing="false" onAction="#onCreateListClick" prefHeight="25.0" prefWidth="63.0" text="Create" />
+            <Button layoutX="231.0" layoutY="265.0" mnemonicParsing="false" onAction="#onPlayListClick" prefHeight="25.0" prefWidth="63.0" text="Play" />
+            <Button layoutX="105.0" layoutY="265.0" mnemonicParsing="false" onAction="#onDeleteListClick" prefHeight="25.0" prefWidth="63.0" text="Delete" />
+            <Button layoutX="521.0" layoutY="265.0" mnemonicParsing="false" onAction="#onAddFileClick" prefHeight="25.0" prefWidth="53.0" text="Add" />
+            <Button fx:id="btnBuild" layoutX="231.0" layoutY="14.0" mnemonicParsing="false" onAction="#onBuildListClick" prefHeight="25.0" prefWidth="63.0" text="Build" />
+         </children>
+      </Pane>
+   </children>
+</VBox>
