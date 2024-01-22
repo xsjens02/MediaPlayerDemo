@@ -32,6 +32,8 @@ public class PlayerController implements Initializable {
     @FXML
     private Label lblTime, lblSound;
     @FXML
+    private Button btnPrevious, btnNext;
+    @FXML
     private Label lblListOverview, lblFullScreen;
     @FXML
     private Slider sliderTime, sliderVolume;
@@ -41,8 +43,9 @@ public class PlayerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        dbSorting.initializeDB("src/main/java/MediaFilesFolder");
+        showListControls(false);
         sliderVolume.setVisible(false);
-
     }
 
     @FXML
@@ -161,6 +164,7 @@ public class PlayerController implements Initializable {
         mediaPlayer.stop();
     }
     private void playPlaylist() {
+        showListControls(true);
         if (currentMediaIndex < mediaList.size()) {
             media = mediaList.get(currentMediaIndex);
             mediaPlayer = new MediaPlayer(media);
@@ -171,6 +175,12 @@ public class PlayerController implements Initializable {
             currentMediaIndex++;
             mediaPlayer.setOnEndOfMedia(this::playPlaylist);
         }
+    }
+
+    private void showListControls(boolean showControls) {
+        btnNext.setVisible(showControls);
+        btnPrevious.setVisible(showControls);
+        lblListOverview.setVisible(showControls);
     }
 
 }

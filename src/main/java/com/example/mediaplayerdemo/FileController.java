@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 
 public class FileController implements Initializable {
 
-    private final File folder = new File("C:\\Users\\au1wp\\Desktop\\MediaFiles");
+    private final File folder = new File("src/main/java/MediaFilesFolder");
 
     @FXML
     private VBox vboxParent;

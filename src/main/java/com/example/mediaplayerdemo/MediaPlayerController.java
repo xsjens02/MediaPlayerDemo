@@ -36,7 +36,7 @@ public class MediaPlayerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        dbSorting.initializeDB("C:\\Users\\au1wp\\Desktop\\MediaFiles");
+        dbSorting.initializeDB("src/main/java/MediaFilesFolder");
     }
 
     @FXML
