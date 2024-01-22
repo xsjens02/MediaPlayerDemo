@@ -6,7 +6,7 @@
 <?import javafx.scene.media.*?>
 
 <VBox fx:id="vbox1" alignment="CENTER" prefHeight="520.0" prefWidth="729.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mediaplayerdemo.MediaPlayerController">
-   <BorderPane prefHeight="547.0" prefWidth="729.0">
+   <BorderPane fx:id="borderPane" prefHeight="547.0" prefWidth="729.0">
       <top>
          <MenuBar prefHeight="19.0" prefWidth="488.0" BorderPane.alignment="CENTER">
            <menus>
