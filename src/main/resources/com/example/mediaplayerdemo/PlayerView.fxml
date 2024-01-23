@@ -47,7 +47,7 @@
                         <Button fx:id="btnStop" mnemonicParsing="false" onAction="#onStopClick" />
                         <HBox alignment="CENTER_LEFT" prefHeight="71.0" prefWidth="155.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label fx:id="lblSound" onMouseEntered="#onSoundEnter" onMouseExited="#onSoundExit" prefHeight="17.0" prefWidth="48.0" text="Sound" />
+                              <Label fx:id="lblSound" onMouseEntered="#onSoundEnter" onMouseExited="#onSoundExit" prefHeight="17.0" prefWidth="48.0" />
                               <Slider fx:id="sliderVolume" max="1.0" onMouseEntered="#onSliderVolumeEnter" onMouseExited="#onSliderVolumeExit" prefHeight="14.0" prefWidth="142.0" />
                            </children>
                         </HBox>

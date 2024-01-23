@@ -14,8 +14,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -53,45 +51,51 @@ public class PlayerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
-        dbSorting.initializeDB("src/main/java/MediaFilesFolder");
+        dbSorting.initializeDB("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\MediaFilesFolder");
         showListControls(false);
         sliderVolume.setVisible(false);
 
-        Image imagePause = new Image(getClass().getResource("/Icon/pause.png").toExternalForm());
+        Image imagePause = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\pause.png");
         ImageView imageViewPause = new ImageView(imagePause);
         imageViewPause.setFitHeight(10);
         imageViewPause.setFitWidth(10);
         btnPause.setGraphic(imageViewPause);
 
-        Image imagePlay = new Image(getClass().getResource("/Icon/play.png").toExternalForm());
+        Image imagePlay = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\play.png");
         ImageView imageViewPlay = new ImageView(imagePlay);
         imageViewPlay.setFitHeight(10);
         imageViewPlay.setFitWidth(10);
         btnPlay.setGraphic(imageViewPlay);
 
-        Image imageStop = new Image(getClass().getResource("/Icon/stop.png").toExternalForm());
+        Image imageStop = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\stop.png");
         ImageView imageViewStop = new ImageView(imageStop);
         imageViewStop.setFitHeight(10);
         imageViewStop.setFitWidth(10);
         btnStop.setGraphic(imageViewStop);
 
-        Image imagePrevious = new Image(getClass().getResource("/Icon/previous.png").toExternalForm());
+        Image imagePrevious = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\previous.png");
         ImageView imageViewPrevious = new ImageView(imagePrevious);
         imageViewPrevious.setFitHeight(20);
         imageViewPrevious.setFitWidth(20);
         btnPrevious.setGraphic(imageViewPrevious);
 
-        Image imageForward = new Image(getClass().getResource("/Icon/forward.png").toExternalForm());
+        Image imageForward = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
         ImageView imageViewForward = new ImageView(imageForward);
         imageViewForward.setFitHeight(20);
         imageViewForward.setFitWidth(20);
         btnNext.setGraphic(imageViewForward);
 
-        Image imageFullscreen = new Image(getClass().getResource("/Icon/fullscreen.png").toExternalForm());
+        Image imageFullscreen = new Image("C:\\JavaFX\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
         ImageView imageViewFullscreen = new ImageView(imageFullscreen);
         imageViewFullscreen.setFitHeight(20);
         imageViewFullscreen.setFitWidth(20);
         btnFullscreen.setGraphic(imageViewFullscreen);
+
+        Image imageVolume = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\volume.png");
+        ImageView imageViewVolume = new ImageView(imageVolume);
+        imageViewVolume.setFitHeight(20);
+        imageViewVolume.setFitWidth(20);
+        lblSound.setGraphic(imageViewVolume);
     }
 
     @FXML
@@ -211,26 +215,7 @@ public class PlayerController implements Initializable {
         }
     }
     @FXML
-    void onFullScreenClick() {
-
-
-    }
-
-    private void setMediaView(Media media) {
-        mediaPlayer = new MediaPlayer(media);
-        mediaView.setMediaPlayer(mediaPlayer);
-        mediaPlayer.setAutoPlay(false);
-        mediaPlaying = false;
-
-        Scene mediaScene = borderPane.getCenter().getScene();
-        double width = mediaScene.getWidth();
-        double height = mediaScene.getHeight() - 100;
-        mediaView.setFitWidth(width);
-        mediaView.setFitHeight(height);
-
-
-        setSliderTime();
-    }
+    void onFullScreenClick() {}
 
     private void playMedia(boolean autoPlay) {
         mediaPlayer = new MediaPlayer(media);
@@ -239,6 +224,12 @@ public class PlayerController implements Initializable {
         setSliderVolume();
         mediaPlayer.setAutoPlay(autoPlay);
         mediaPlaying = autoPlay;
+
+        Scene mediaScene = borderPane.getCenter().getScene();
+        double width = mediaScene.getWidth();
+        double height = mediaScene.getHeight() - 100;
+        mediaView.setFitWidth(width);
+        mediaView.setFitHeight(height);
     }
 
     private void setSliderTime() {
