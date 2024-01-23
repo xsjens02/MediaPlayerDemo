@@ -7,14 +7,21 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Main extends Application {
+
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("PlayerView.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("MediaPlayer");
         stage.setScene(scene);
+        stage.setResizable(false);
+        stage.setMaximized(true);
         stage.show();
     }
+
+
+
 
 
     public static void main(String[] args) {
