@@ -2,16 +2,20 @@ package com.example.mediaplayerdemo;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -21,6 +25,8 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class PlayerController implements Initializable {
+    public BorderPane borderPane;
+    public Button btnFullscreen;
     private Media media;
     private ArrayList<Media> mediaList = new ArrayList<>();
     private int mediaListIndex = 0;
@@ -42,6 +48,7 @@ public class PlayerController implements Initializable {
 
     @FXML
     private VBox vboxParent;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -79,6 +86,12 @@ public class PlayerController implements Initializable {
         imageViewForward.setFitHeight(20);
         imageViewForward.setFitWidth(20);
         btnNext.setGraphic(imageViewForward);
+
+        Image imageFullscreen = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\fullscreen.png");
+        ImageView imageViewFullscreen = new ImageView(imageFullscreen);
+        imageViewFullscreen.setFitHeight(20);
+        imageViewFullscreen.setFitWidth(20);
+        btnFullscreen.setGraphic(imageViewFullscreen);
     }
 
     @FXML
@@ -198,16 +211,23 @@ public class PlayerController implements Initializable {
         }
     }
     @FXML
-    void onFullScreenClick() {}
+    void onFullScreenClick() {
+
+
+    }
 
     private void setMediaView(Media media) {
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
         mediaPlayer.setAutoPlay(false);
         mediaPlaying = false;
-        //Scene scene = vboxParent.getScene();
-        //mediaView.fitWidthProperty().bind(scene.widthProperty());
-        //mediaView.fitHeightProperty().bind(scene.heightProperty());
+
+        Scene mediaScene = borderPane.getCenter().getScene();
+        double width = mediaScene.getWidth();
+        double height = mediaScene.getHeight() - 100;
+        mediaView.setFitWidth(width);
+        mediaView.setFitHeight(height);
+
 
         setSliderTime();
     }
@@ -274,6 +294,7 @@ public class PlayerController implements Initializable {
         lblListOverview.setVisible(showControls);
     }
 
+
     private void setSliderVolume() {
         sliderVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
             mediaPlayer.setVolume((Double) newValue);
@@ -283,4 +304,5 @@ public class PlayerController implements Initializable {
     private void initializeVariables() {
 
     }
+
 }

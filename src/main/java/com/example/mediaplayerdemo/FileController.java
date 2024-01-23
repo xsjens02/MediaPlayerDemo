@@ -1,7 +1,9 @@
 package com.example.mediaplayerdemo;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
@@ -22,6 +24,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class FileController implements Initializable {
 
@@ -46,10 +51,21 @@ public class FileController implements Initializable {
     private TableColumn<MediaFile, String> colPath;
     private MediaFile selectedObj;
 
+    private ScheduledExecutorService executorService;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
         arrangeTableView();
+
+        // Start the scheduled task when the text field gains focus
+        txtSearchField.setOnMousePressed(event -> startSearchTask());
+        // Stop the scheduled task when the text field loses focus
+        txtSearchField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                stopSearchTask();
+            }
+        });
 
     }
 
@@ -176,4 +192,54 @@ public class FileController implements Initializable {
         tableView.getItems().clear();
         MediaFile.getSharedObj().resetMedia();
     }
+
+    @FXML
+    private void setTxtSearchField(){
+
+    }
+
+    @FXML
+    public void onSearch() {
+        String query = txtSearchField.getText().toLowerCase();
+        ObservableList<MediaFile> filteredData = FXCollections.observableArrayList();
+
+
+
+            for (MediaFile item : fileCollection) {
+                if (item.toString().contains(query)) {
+                    filteredData.add(item);
+                }
+            }
+            tableView.setItems(filteredData);
+
+
+    }
+
+    private void startSearchTask() {
+        executorService = Executors.newSingleThreadScheduledExecutor();
+
+        executorService.scheduleAtFixedRate(() -> {
+            String query = txtSearchField.getText();
+            ObservableList<MediaFile> filteredData = FXCollections.observableArrayList();
+            for (MediaFile item : fileCollection) {
+                if (item.toString().contains(query)) {
+                    filteredData.add(item);
+                }
+            }
+
+            Platform.runLater(() -> {
+                tableView.setItems(filteredData);
+            });
+        }, 0, 500, TimeUnit.MILLISECONDS);
+    }
+
+    private void stopSearchTask() {
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdownNow();
+        }
+    }
+
+
+
+
 }

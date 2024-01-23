@@ -62,16 +62,12 @@
                                           <Insets />
                                        </HBox.margin>
                                     </Label>
+                                    <Button fx:id="btnFullscreen" mnemonicParsing="false" onAction="#onFullScreenClick" />
                                  </children>
                                  <padding>
                                     <Insets right="15.0" />
                                  </padding>
                               </HBox>
-                              <Label fx:id="lblFullScreen" onContextMenuRequested="#onFullScreenClick" text="Full Screen" HBox.hgrow="ALWAYS">
-                                 <HBox.margin>
-                                    <Insets right="20.0" />
-                                 </HBox.margin>
-                              </Label>
                            </children>
                         </HBox>
                      </children>
