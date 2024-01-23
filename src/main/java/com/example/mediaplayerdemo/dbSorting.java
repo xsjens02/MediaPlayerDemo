@@ -106,7 +106,7 @@ public class dbSorting {
         for (File dbFile : dbFiles) {
             if (!dbFile.isFile()) {
                 MediaFile deleteFile = new MediaFile(dbFile);
-                String sqlSpecifier = "tblMedia WHERE fldPath=" + deleteFile.getDeleteValues();
+                String sqlSpecifier = "tblMedia WHERE fldPath=" + deleteFile.getDeleteValuesSQL();
                 deleteFromDB(sqlSpecifier);
             } else {
                 boolean presenceInFolder = false;
@@ -119,7 +119,11 @@ public class dbSorting {
                 }
                 if (!presenceInFolder) {
                     MediaFile deleteFile = new MediaFile(dbFile);
-                    String sqlSpecifier = "tblMedia WHERE fldPath=" + deleteFile.getDeleteValues();
+                    if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", deleteFile.getMediaID())) {
+                        String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + deleteFile.getMediaID();
+                        deleteFromDB(sqlSpecifier);
+                    }
+                    String sqlSpecifier = "tblMedia WHERE fldPath=" + deleteFile.getDeleteValuesSQL();
                     deleteFromDB(sqlSpecifier);
                 }
             }
@@ -153,6 +157,26 @@ public class dbSorting {
         PreparedStatement addData;
         try {
             addData = dbConnection.prepareCall("INSERT INTO " + sqlSpecifier);
+            addData.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
+        }
+    }
+
+    /**
+     * Update String data in database
+     * @param table to update data in
+     * @param field what data to update
+     * @param newValue the new value to update in
+     * @param sqlSpecifier where to update data
+     */
+    public static void updateStringInDB(String table, String field, String newValue, String sqlSpecifier) {
+        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        PreparedStatement addData;
+        try {
+            addData = dbConnection.prepareCall("UPDATE " + table + " SET " + field + "=" + newValue + " " + sqlSpecifier);
             addData.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

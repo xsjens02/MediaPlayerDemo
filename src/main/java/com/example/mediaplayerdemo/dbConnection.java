@@ -5,7 +5,7 @@ import java.util.Properties;
 public class dbConnection {
     public static final String USERNAME = "sa";
     public static final String PASSWORD = "1234";
-    public static final String DATABASE_NAME = "dbMediaPLayer";
+    public static final String DATABASE_NAME = "dbMediaPlayer";
     public static final String PORT = "1433";
     public static final String URL = "jdbc:sqlserver://localhost:" + PORT + ";databaseName=" + DATABASE_NAME;
     public static final String ENCRYPT = "false";
