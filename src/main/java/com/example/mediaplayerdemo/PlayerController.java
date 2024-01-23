@@ -14,8 +14,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -87,7 +85,7 @@ public class PlayerController implements Initializable {
         imageViewForward.setFitWidth(20);
         btnNext.setGraphic(imageViewForward);
 
-        Image imageFullscreen = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\fullscreen.png");
+        Image imageFullscreen = new Image("C:\\JavaFX\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
         ImageView imageViewFullscreen = new ImageView(imageFullscreen);
         imageViewFullscreen.setFitHeight(20);
         imageViewFullscreen.setFitWidth(20);
@@ -211,26 +209,7 @@ public class PlayerController implements Initializable {
         }
     }
     @FXML
-    void onFullScreenClick() {
-
-
-    }
-
-    private void setMediaView(Media media) {
-        mediaPlayer = new MediaPlayer(media);
-        mediaView.setMediaPlayer(mediaPlayer);
-        mediaPlayer.setAutoPlay(false);
-        mediaPlaying = false;
-
-        Scene mediaScene = borderPane.getCenter().getScene();
-        double width = mediaScene.getWidth();
-        double height = mediaScene.getHeight() - 100;
-        mediaView.setFitWidth(width);
-        mediaView.setFitHeight(height);
-
-
-        setSliderTime();
-    }
+    void onFullScreenClick() {}
 
     private void playMedia(boolean autoPlay) {
         mediaPlayer = new MediaPlayer(media);
@@ -239,6 +218,12 @@ public class PlayerController implements Initializable {
         setSliderVolume();
         mediaPlayer.setAutoPlay(autoPlay);
         mediaPlaying = autoPlay;
+
+        Scene mediaScene = borderPane.getCenter().getScene();
+        double width = mediaScene.getWidth();
+        double height = mediaScene.getHeight() - 100;
+        mediaView.setFitWidth(width);
+        mediaView.setFitHeight(height);
     }
 
     private void setSliderTime() {
