@@ -161,8 +161,6 @@ public class FileController implements Initializable {
         if (selectedObj != null) {
             //Set the selected object to a static object then accessible by all
             MediaFile.getSharedObj().setSharedObj(selectedObj);
-            //Reset selected object
-            selectedObj = null;
             //Close current stage
             Stage currentStage = (Stage) vboxParent.getScene().getWindow();
             currentStage.close();
@@ -176,5 +174,6 @@ public class FileController implements Initializable {
         selectedObj = null;
         fileCollection.clear();
         tableView.getItems().clear();
+        MediaFile.getSharedObj().resetMedia();
     }
 }
