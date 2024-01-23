@@ -49,7 +49,7 @@ public class MediaPlayerController implements Initializable {
         media = MediaFile.getSharedObj().getMedia();
         if (media != null) {
             setMediaView(media);
-            MediaFile.getSharedObj().resetObj();
+
         }
     }
 
@@ -60,7 +60,7 @@ public class MediaPlayerController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        MediaFile.getSharedObj().resetObj();
+
     }
 
     @FXML

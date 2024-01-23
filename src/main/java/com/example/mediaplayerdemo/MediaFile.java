@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class MediaFile {
     //region static implementation
-    private static MediaFile sharedObj = new MediaFile();
+    private static final MediaFile sharedObj = new MediaFile();
     private static final String file = "mp4";
     //endregion
     //region instance variables
@@ -84,13 +84,6 @@ public class MediaFile {
         this.path = object.getPath();
         setInstanceMedia(object.getPath());
     }
-
-    /**
-     * maybe delete
-     */
-    public void resetObj() {
-        sharedObj = null;
-    }
     //endregion
     //region getters and setters
     public String getFile() {
@@ -162,8 +155,16 @@ public class MediaFile {
      * Get instance delete values formatted for use as value in sql-statement
      * @return instance delete values formatted
      */
-    public String getDeleteValues() {
+    public String getDeleteValuesSQL() {
         return "'" + this.mediaID + "'";
+    }
+
+    /**
+     * Get instance path values formatted for use as value in sql-statement
+     * @return instance path values formatted
+     */
+    public String getPathValuesSQL() {
+        return "'" + this.path + "'";
     }
 
     /**
@@ -208,6 +209,13 @@ public class MediaFile {
     private void fetchPathFromDB() {
         String sqlSpecifier = "WHERE fldMediaID=" + this.mediaID;
         this.path = dbSorting.getStringDataFromDB("tblMedia", "fldPath", sqlSpecifier).trim();
+    }
+
+    /**
+     * Reset media of an instance
+     */
+    public void resetMedia() {
+        this.media = null;
     }
 
     /**

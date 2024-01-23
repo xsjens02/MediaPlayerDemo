@@ -33,7 +33,7 @@
                <children>
                   <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
                      <children>
-                        <Slider fx:id="sliderTime" prefHeight="14.0" prefWidth="480.0" HBox.hgrow="ALWAYS" />
+                        <Slider fx:id="sliderTime" onMousePressed="#onSliderTimePressed" prefHeight="14.0" prefWidth="480.0" HBox.hgrow="ALWAYS" />
                         <Label fx:id="lblTime" prefHeight="17.0" prefWidth="83.0" text="Duration 00:00" />
                      </children>
                      <padding>
@@ -48,7 +48,7 @@
                         <HBox alignment="CENTER_LEFT" prefHeight="71.0" prefWidth="155.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label fx:id="lblSound" onMouseEntered="#onSoundEnter" onMouseExited="#onSoundExit" prefHeight="17.0" prefWidth="48.0" text="Sound" />
-                              <Slider fx:id="sliderVolume" max="1.0" prefHeight="14.0" prefWidth="142.0" />
+                              <Slider fx:id="sliderVolume" max="1.0" onMouseEntered="#onSliderVolumeEnter" onMouseExited="#onSliderVolumeExit" prefHeight="14.0" prefWidth="142.0" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" prefHeight="71.0" prefWidth="266.0" HBox.hgrow="ALWAYS">
