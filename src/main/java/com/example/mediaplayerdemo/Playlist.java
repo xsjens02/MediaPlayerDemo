@@ -1,5 +1,8 @@
 package com.example.mediaplayerdemo;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+
 import java.util.ArrayList;
 
 public class Playlist {
@@ -108,4 +111,10 @@ public class Playlist {
         return this.playlistTitle;
     }
     //endregion
+
+    private TextField searchBar;
+    private Button searchButton;
+    private Playlist playlist;
+
+
 }

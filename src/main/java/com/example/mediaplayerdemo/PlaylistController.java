@@ -2,11 +2,13 @@ package com.example.mediaplayerdemo;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -43,6 +45,7 @@ public class PlaylistController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
         arrangePlaylistView();
+
 
 
     }
@@ -317,5 +320,6 @@ public class PlaylistController implements Initializable {
         listViewPlaylist.getItems().clear();
         fileCollection.clear();
         listViewFile.getItems().clear();
+
     }
 }
