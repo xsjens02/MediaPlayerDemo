@@ -51,51 +51,45 @@ public class PlayerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
-        dbSorting.initializeDB("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\MediaFilesFolder");
+        dbSorting.initializeDB("src/main/java/MediaFilesFolder");
         showListControls(false);
         sliderVolume.setVisible(false);
 
-        Image imagePause = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\pause.png");
+        Image imagePause = new Image(getClass().getResource("/Icon/pause.png").toExternalForm());
         ImageView imageViewPause = new ImageView(imagePause);
         imageViewPause.setFitHeight(10);
         imageViewPause.setFitWidth(10);
         btnPause.setGraphic(imageViewPause);
 
-        Image imagePlay = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\play.png");
+        Image imagePlay = new Image(getClass().getResource("/Icon/play.png").toExternalForm());
         ImageView imageViewPlay = new ImageView(imagePlay);
         imageViewPlay.setFitHeight(10);
         imageViewPlay.setFitWidth(10);
         btnPlay.setGraphic(imageViewPlay);
 
-        Image imageStop = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\stop.png");
+        Image imageStop = new Image(getClass().getResource("/Icon/stop.png").toExternalForm());
         ImageView imageViewStop = new ImageView(imageStop);
         imageViewStop.setFitHeight(10);
         imageViewStop.setFitWidth(10);
         btnStop.setGraphic(imageViewStop);
 
-        Image imagePrevious = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\previous.png");
+        Image imagePrevious = new Image(getClass().getResource("/Icon/previous.png").toExternalForm());
         ImageView imageViewPrevious = new ImageView(imagePrevious);
         imageViewPrevious.setFitHeight(20);
         imageViewPrevious.setFitWidth(20);
         btnPrevious.setGraphic(imageViewPrevious);
 
-        Image imageForward = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
+        Image imageForward = new Image(getClass().getResource("/Icon/forward.png").toExternalForm());
         ImageView imageViewForward = new ImageView(imageForward);
         imageViewForward.setFitHeight(20);
         imageViewForward.setFitWidth(20);
         btnNext.setGraphic(imageViewForward);
 
-        Image imageFullscreen = new Image("C:\\JavaFX\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
+        Image imageFullscreen = new Image(getClass().getResource("/Icon/fullscreen.png").toExternalForm());
         ImageView imageViewFullscreen = new ImageView(imageFullscreen);
         imageViewFullscreen.setFitHeight(20);
         imageViewFullscreen.setFitWidth(20);
         btnFullscreen.setGraphic(imageViewFullscreen);
-
-        Image imageVolume = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\volume.png");
-        ImageView imageViewVolume = new ImageView(imageVolume);
-        imageViewVolume.setFitHeight(20);
-        imageViewVolume.setFitWidth(20);
-        lblSound.setGraphic(imageViewVolume);
     }
 
     @FXML
