@@ -1,18 +1,17 @@
 package com.example.mediaplayerdemo;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.media.Media;
 
 import java.util.ArrayList;
 
 public class Playlist {
     //region static implementation
-    private static Playlist sharedObj = new Playlist();
+    private static final Playlist sharedObj = new Playlist();
     //endregion
     //region instance variables
     private int playlistID;
     private String playlistTitle;
-    private ArrayList<MediaFile> playlistFiles = new ArrayList<>();
+    private ArrayList<Media> playlistFiles = new ArrayList<>();
     //endregion
     //region constructors
     /**
@@ -61,7 +60,7 @@ public class Playlist {
     public String getPlaylistTitle() {
         return this.playlistTitle;
     }
-    public ArrayList<MediaFile> getPlaylistFiles() {
+    public ArrayList<Media> getPlaylistFiles() {
         return this.playlistFiles;
     }
     public void setPlaylistID(int playlistID) {
@@ -70,7 +69,7 @@ public class Playlist {
     public void setPlaylistTitle(String playlistTitle) {
         this.playlistTitle = playlistTitle;
     }
-    public void setPlaylistFiles(ArrayList<MediaFile> playlistFiles) {
+    public void setPlaylistFiles(ArrayList<Media> playlistFiles) {
         this.playlistFiles = playlistFiles;
     }
     //endregion
@@ -96,10 +95,11 @@ public class Playlist {
 
     /**
      * Adds new objects to playlist files array
-     * @param newObj to add to playlist files array
+     * @param mediaFile to add to playlist files array
      */
-    public void addToPlaylistFiles(MediaFile newObj) {
-        this.playlistFiles.add(newObj);
+    public void addToPlaylistFiles(MediaFile mediaFile) {
+        Media newMedia = MediaFile.createMedia(mediaFile.getPath());
+        this.playlistFiles.add(newMedia);
     }
 
     /**
@@ -111,10 +111,4 @@ public class Playlist {
         return this.playlistTitle;
     }
     //endregion
-
-    private TextField searchBar;
-    private Button searchButton;
-    private Playlist playlist;
-
-
 }
