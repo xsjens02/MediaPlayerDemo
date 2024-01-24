@@ -218,6 +218,21 @@ public class PlayerController implements Initializable {
     }
     @FXML
     void onFullScreenClick() {
+        Stage stage = (Stage) vboxParent.getScene().getWindow();
+        stage.setFullScreen(true);
+
+
+        Scene mediaScene = borderPane.getCenter().getScene();
+        double width = mediaScene.getWidth();
+        double height = mediaScene.getHeight();
+        mediaView.setFitWidth(width);
+        mediaView.setFitHeight(height);
+        btnPlay.setVisible(false);
+        btnPause.setVisible(false);
+        btnStop.setVisible(false);
+        btnNext.setVisible(false);
+        btnPrevious.setVisible(false);
+        btnFullscreen.setVisible(false);
 
 
     }
