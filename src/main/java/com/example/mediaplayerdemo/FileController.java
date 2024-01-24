@@ -3,7 +3,6 @@ package com.example.mediaplayerdemo;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
@@ -13,7 +12,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -29,16 +27,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class FileController implements Initializable {
-
-    private final File folder = new File("src/main/java/MediaFilesFolder");
-
+    //region FXML annotations
     @FXML
     private VBox vboxParent;
-
     @FXML
     private TextField txtSearchField;
-
-    private final ObservableList<MediaFile> fileCollection = FXCollections.observableArrayList();
     @FXML
     private TableView<MediaFile> tableView;
     @FXML
@@ -49,15 +42,18 @@ public class FileController implements Initializable {
     private TableColumn<MediaFile, String> colFile;
     @FXML
     private TableColumn<MediaFile, String> colPath;
+    //endregion
+    //region instance variables
+    private final File folder = new File("src/main/java/MediaFilesFolder");
+    private final ObservableList<MediaFile> fileCollection = FXCollections.observableArrayList();
     private MediaFile selectedObj;
-
     private ScheduledExecutorService executorService;
-
+    //endregion
+    //region initialize
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
         arrangeTableView();
-
         // Start the scheduled task when the text field gains focus
         txtSearchField.setOnMousePressed(event -> startSearchTask());
         // Stop the scheduled task when the text field loses focus
@@ -66,49 +62,23 @@ public class FileController implements Initializable {
                 stopSearchTask();
             }
         });
-
     }
-
-    /**
-     * Arrange tableview to represent database with data from file folder
-     */
-    private void arrangeTableView() {
-        //Fetch data from database
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
-        PreparedStatement getData;
-        try {
-            getData = dbConnection.prepareCall("SELECT * FROM tblMedia");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        //Sort data from database
-        try {
-            ResultSet tblData = getData.executeQuery();
-            while (tblData.next()) {
-                int mediaID = tblData.getInt("fldMediaID");
-                String title = tblData.getString("fldTitle").trim();
-                int duration = tblData.getInt("fldDuration");
-                String path = tblData.getString("fldPath").trim();
-
-                //Use data to create object for observable list
-                fileCollection.add(new MediaFile(mediaID, title, duration, path));
-
-            }
-            //Set cell values of tableview
-            colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
-            colDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
-            colFile.setCellValueFactory(new PropertyValueFactory<>("file"));
-            colPath.setCellValueFactory(new PropertyValueFactory<>("path"));
-
-            //Set tableview to observable list
-            tableView.setItems(fileCollection);
-        } catch (SQLException ignore) {}
-        com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
-    }
-
+    //endregion
+    //region control handlers
     /**
      * Assign selected object when user clicks on tableview
      */
+    @FXML
+    public void onSearch() {
+        String query = txtSearchField.getText().toLowerCase();
+        ObservableList<MediaFile> filteredData = FXCollections.observableArrayList();
+        for (MediaFile item : fileCollection) {
+            if (item.toString().contains(query)) {
+                filteredData.add(item);
+            }
+        }
+        tableView.setItems(filteredData);
+    }
     @FXML
     private void onFileClick() {
         selectedObj = tableView.getSelectionModel().getSelectedItem();
@@ -158,7 +128,7 @@ public class FileController implements Initializable {
                 if (!dbSorting.isFilePresentInFolder(folder, selectedFile)) {
                     //Move new file into folder, add new file to listview and database
                     MediaFile newFile = new MediaFile(dbSorting.moveFile(folder, selectedFile));
-                    String sqlSpecifier = "tblMedia (fldPath, fldTitle, fldFormat, fldDuration) VALUES " + newFile.getInsertValues();
+                    String sqlSpecifier = "tblMedia (fldPath, fldTitle, fldFormat, fldDuration) VALUES " + newFile.getInsertValuesSQL();
                     dbSorting.addToDB(sqlSpecifier);
                     fileCollection.add(newFile);
                 }
@@ -183,6 +153,10 @@ public class FileController implements Initializable {
         }
     }
 
+    @FXML
+    private void setTxtSearchField(){}
+    //endregion
+    //region additional assisting methods
     /**
      * Initialize all relevant variables by reset
      */
@@ -193,31 +167,45 @@ public class FileController implements Initializable {
         MediaFile.getSharedObj().resetMedia();
     }
 
-    @FXML
-    private void setTxtSearchField(){
+    /**
+     * Arrange tableview to represent database with data from file folder
+     */
+    private void arrangeTableView() {
+        //Fetch data from database
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
+        PreparedStatement getData;
+        try {
+            getData = connection.prepareCall("SELECT * FROM tblMedia");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        //Sort data from database
+        try {
+            ResultSet tblData = getData.executeQuery();
+            while (tblData.next()) {
+                int mediaID = tblData.getInt("fldMediaID");
+                String title = tblData.getString("fldTitle").trim();
+                int duration = tblData.getInt("fldDuration");
+                String path = tblData.getString("fldPath").trim();
 
-    }
+                //Use data to create object for observable list
+                fileCollection.add(new MediaFile(mediaID, title, duration, path));
 
-    @FXML
-    public void onSearch() {
-        String query = txtSearchField.getText().toLowerCase();
-        ObservableList<MediaFile> filteredData = FXCollections.observableArrayList();
-
-
-
-            for (MediaFile item : fileCollection) {
-                if (item.toString().contains(query)) {
-                    filteredData.add(item);
-                }
             }
-            tableView.setItems(filteredData);
+            //Set cell values of tableview
+            colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+            colDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
+            colFile.setCellValueFactory(new PropertyValueFactory<>("file"));
+            colPath.setCellValueFactory(new PropertyValueFactory<>("path"));
 
-
+            //Set tableview to observable list
+            tableView.setItems(fileCollection);
+        } catch (SQLException ignore) {}
+        dbConnection.databaseClose(connection);
     }
 
     private void startSearchTask() {
         executorService = Executors.newSingleThreadScheduledExecutor();
-
         executorService.scheduleAtFixedRate(() -> {
             String query = txtSearchField.getText();
             ObservableList<MediaFile> filteredData = FXCollections.observableArrayList();
@@ -226,7 +214,6 @@ public class FileController implements Initializable {
                     filteredData.add(item);
                 }
             }
-
             Platform.runLater(() -> {
                 tableView.setItems(filteredData);
             });
@@ -238,8 +225,5 @@ public class FileController implements Initializable {
             executorService.shutdownNow();
         }
     }
-
-
-
-
+    //endregion
 }

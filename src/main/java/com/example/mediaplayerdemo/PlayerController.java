@@ -8,16 +8,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.util.Duration;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -25,80 +24,52 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class PlayerController implements Initializable {
+    //region FXML annotations
+    @FXML
+    private VBox vboxParent;
+    @FXML
     public BorderPane borderPane;
-    public Button btnFullscreen;
-    private Media media;
-    private ArrayList<Media> mediaList = new ArrayList<>();
-    private int mediaListIndex = 0;
-    private MediaPlayer mediaPlayer;
-    private boolean mediaPlaying = false;
-
     @FXML
-    private MediaView mediaView;
-    @FXML
-    private Button btnPause, btnPlay, btnStop;
+    private Slider sliderTime, sliderVolume;
     @FXML
     private Label lblTime, lblSound;
     @FXML
-    private Button btnPrevious, btnNext;
-    @FXML
     private Label lblListOverview, lblFullScreen;
     @FXML
+
     private Slider sliderTime, sliderVolume;
     @FXML
     private VBox vboxParent;
     private boolean isFullscreenActive = false;
 
+
+    private Button btnPause, btnPlay, btnStop;
+    @FXML
+    private Button btnPrevious, btnNext;
+    @FXML
+    public Button btnFullscreen;
+    @FXML
+    private MediaView mediaView;
+    //endregion
+    //region instance variables
+    private MediaPlayer mediaPlayer;
+    private Media media;
+    private ArrayList<Media> mediaList = new ArrayList<>();
+    private int mediaListIndex = 0;
+    private boolean mediaPlaying = false;
+    //endregion
+    //region initialize
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        dbSorting.initializeDB("src/main/java/MediaFilesFolder");
         initializeVariables();
-        dbSorting.initializeDB("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\MediaFilesFolder");
-        showListControls(false);
-        sliderVolume.setVisible(false);
+        setIconImages();
 
-        Image imagePause = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\pause.png");
-        ImageView imageViewPause = new ImageView(imagePause);
-        imageViewPause.setFitHeight(10);
-        imageViewPause.setFitWidth(10);
-        btnPause.setGraphic(imageViewPause);
-
-        Image imagePlay = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\play.png");
-        ImageView imageViewPlay = new ImageView(imagePlay);
-        imageViewPlay.setFitHeight(10);
-        imageViewPlay.setFitWidth(10);
-        btnPlay.setGraphic(imageViewPlay);
-
-        Image imageStop = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\stop.png");
-        ImageView imageViewStop = new ImageView(imageStop);
-        imageViewStop.setFitHeight(10);
-        imageViewStop.setFitWidth(10);
-        btnStop.setGraphic(imageViewStop);
-
-        Image imagePrevious = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\previous.png");
-        ImageView imageViewPrevious = new ImageView(imagePrevious);
-        imageViewPrevious.setFitHeight(20);
-        imageViewPrevious.setFitWidth(20);
-        btnPrevious.setGraphic(imageViewPrevious);
-
-        Image imageForward = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\forward.png");
-        ImageView imageViewForward = new ImageView(imageForward);
-        imageViewForward.setFitHeight(20);
-        imageViewForward.setFitWidth(20);
-        btnNext.setGraphic(imageViewForward);
-
-        Image imageFullscreen = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\fullscreen.png");
-        ImageView imageViewFullscreen = new ImageView(imageFullscreen);
-        imageViewFullscreen.setFitHeight(20);
-        imageViewFullscreen.setFitWidth(20);
-        btnFullscreen.setGraphic(imageViewFullscreen);
-
-        Image imageVolume = new Image("C:\\Users\\Noah\\Documents\\GitHub\\MediaPlayerDemo\\src\\main\\java\\Icon\\volume.png");
-        ImageView imageViewVolume = new ImageView(imageVolume);
-        imageViewVolume.setFitHeight(20);
-        imageViewVolume.setFitWidth(20);
-        lblSound.setGraphic(imageViewVolume);
+        borderPane.setOnKeyPressed(this::handleKeyPressPlayPause);
     }
-
+    //endregion
+    //region control handlers
     @FXML
     private void onDriveOption() {
         FileChooser fileChooser = new FileChooser();
@@ -216,6 +187,7 @@ public class PlayerController implements Initializable {
         }
     }
     @FXML
+
     void onFullScreenClick() {
         if (isFullscreenActive) {
             Stage stage = (Stage) vboxParent.getScene().getWindow();
@@ -272,6 +244,11 @@ public class PlayerController implements Initializable {
         setSliderTime();
     }
 
+
+
+    //endregion
+    //region additional assisting methods
+
     private void playMedia(boolean autoPlay) {
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
@@ -279,32 +256,13 @@ public class PlayerController implements Initializable {
         setSliderVolume();
         mediaPlayer.setAutoPlay(autoPlay);
         mediaPlaying = autoPlay;
-
         Scene mediaScene = borderPane.getCenter().getScene();
         double width = mediaScene.getWidth();
         double height = mediaScene.getHeight() - 100;
         mediaView.setFitWidth(width);
         mediaView.setFitHeight(height);
-
     }
 
-    private void setSliderTime() {
-        mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> {
-            sliderTime.setValue(newValue.toSeconds());
-            lblTime.setText("Duration: " + (int)sliderTime.getValue() + ":" + (int)media.getDuration().toSeconds());
-        }));
-
-        mediaPlayer.setOnReady(() ->{
-            Duration totalDuration = media.getDuration();
-            sliderTime.setMax(totalDuration.toSeconds());
-            lblTime.setText("Duration: 00:" + (int)media.getDuration().toSeconds());
-        });
-    }
-
-    private void stopMediaPlayer() {
-        mediaPlaying = false;
-        mediaPlayer.stop();
-    }
     private void playPlaylist() {
         showListControls(true);
         if (mediaListIndex == 0) {
@@ -335,12 +293,23 @@ public class PlayerController implements Initializable {
         }
     }
 
-    private void showListControls(boolean showControls) {
-        btnNext.setVisible(showControls);
-        btnPrevious.setVisible(showControls);
-        lblListOverview.setVisible(showControls);
+    private void stopMediaPlayer() {
+        mediaPlaying = false;
+        mediaPlayer.stop();
     }
 
+    private void setSliderTime() {
+        mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> {
+            sliderTime.setValue(newValue.toSeconds());
+            lblTime.setText("Duration: " + (int)sliderTime.getValue() + ":" + (int)media.getDuration().toSeconds());
+        }));
+
+        mediaPlayer.setOnReady(() ->{
+            Duration totalDuration = media.getDuration();
+            sliderTime.setMax(totalDuration.toSeconds());
+            lblTime.setText("Duration: 00:" + (int)media.getDuration().toSeconds());
+        });
+    }
 
     private void setSliderVolume() {
         sliderVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -348,8 +317,69 @@ public class PlayerController implements Initializable {
         });
     }
 
-    private void initializeVariables() {
-
+    private void showListControls(boolean showControls) {
+        btnNext.setVisible(showControls);
+        btnPrevious.setVisible(showControls);
+        lblListOverview.setVisible(showControls);
     }
 
+    private void setIconImages() {
+        Image imagePause = new Image(getClass().getResource("/Icon/pause.png").toExternalForm());
+        ImageView imageViewPause = new ImageView(imagePause);
+        imageViewPause.setFitHeight(10);
+        imageViewPause.setFitWidth(10);
+        btnPause.setGraphic(imageViewPause);
+
+        Image imagePlay = new Image(getClass().getResource("/Icon/play.png").toExternalForm());
+        ImageView imageViewPlay = new ImageView(imagePlay);
+        imageViewPlay.setFitHeight(10);
+        imageViewPlay.setFitWidth(10);
+        btnPlay.setGraphic(imageViewPlay);
+
+        Image imageStop = new Image(getClass().getResource("/Icon/stop.png").toExternalForm());
+        ImageView imageViewStop = new ImageView(imageStop);
+        imageViewStop.setFitHeight(10);
+        imageViewStop.setFitWidth(10);
+        btnStop.setGraphic(imageViewStop);
+
+        Image imagePrevious = new Image(getClass().getResource("/Icon/previous.png").toExternalForm());
+        ImageView imageViewPrevious = new ImageView(imagePrevious);
+        imageViewPrevious.setFitHeight(20);
+        imageViewPrevious.setFitWidth(20);
+        btnPrevious.setGraphic(imageViewPrevious);
+
+        Image imageForward = new Image(getClass().getResource("/Icon/forward.png").toExternalForm());
+        ImageView imageViewForward = new ImageView(imageForward);
+        imageViewForward.setFitHeight(20);
+        imageViewForward.setFitWidth(20);
+        btnNext.setGraphic(imageViewForward);
+
+        Image imageFullscreen = new Image(getClass().getResource("/Icon/fullscreen.png").toExternalForm());
+        ImageView imageViewFullscreen = new ImageView(imageFullscreen);
+        imageViewFullscreen.setFitHeight(20);
+        imageViewFullscreen.setFitWidth(20);
+        btnFullscreen.setGraphic(imageViewFullscreen);
+    }
+
+    private void initializeVariables() {
+        media = null;
+        mediaPlayer = null;
+        mediaListIndex = 0;
+        mediaPlaying = false;
+        showListControls(false);
+        sliderVolume.setVisible(false);
+    }
+    //endregion
+
+    private void handleKeyPressPlayPause(KeyEvent event) {
+        if (event.getCode() == KeyCode.P || event.getCode() == KeyCode.SPACE) {
+            if (mediaPlaying) {
+                mediaPlaying = false;
+                mediaPlayer.pause();
+            } else {
+                mediaPlaying = true;
+                mediaPlayer.play();
+            }
+        }
+    }
 }

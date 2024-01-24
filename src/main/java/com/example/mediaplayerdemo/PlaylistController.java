@@ -9,7 +9,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -20,61 +19,32 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class PlaylistController implements Initializable {
-
+    //region FXML annotations
     @FXML
     private VBox vboxParent;
-
     @FXML
     private Button btnBuild;
     @FXML
     private TextField txtTitlePrompt;
-
-    private final ObservableList<Playlist> playlistCollection = FXCollections.observableArrayList();
     @FXML
     private ListView<Playlist> listViewPlaylist;
-    private final ObservableList<MediaFile> fileCollection = FXCollections.observableArrayList();
     @FXML
     private ListView<MediaFile> listViewFile;
-
+    //endregion
+    //region instances variables
+    private final ObservableList<Playlist> playlistCollection = FXCollections.observableArrayList();
+    private final ObservableList<MediaFile> fileCollection = FXCollections.observableArrayList();
     private Playlist selectedObjPlaylist;
     private MediaFile selectedObjFile;
-
+    //endregion
+    //region initialize
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
         arrangePlaylistView();
-
-
     }
-
-    /**
-     * Arrange listview to represent database with data of playlists
-     */
-    public void arrangePlaylistView() {
-        //Fetch data from database
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
-        PreparedStatement getData;
-        try {
-            getData = dbConnection.prepareCall("SELECT * FROM tblPlaylist");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        //Sort data from database
-        try {
-            ResultSet tblData = getData.executeQuery();
-            while (tblData.next()) {
-                int playlistID = tblData.getInt("fldPlaylistID");
-                String playlistTitle = tblData.getString("fldPlaylistTitle");
-
-                //Use data to create object for observable list
-                playlistCollection.add(new Playlist(playlistID, playlistTitle));
-            }
-            //Set listview of playlists to observable list
-            listViewPlaylist.setItems(playlistCollection);
-        } catch (SQLException ignore) {}
-        com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
-    }
-
+    //endregion
+    //region control handlers
     /**
      * Assign selected object (playlist) when user clicks on listview of playlists
      */
@@ -95,40 +65,6 @@ public class PlaylistController implements Initializable {
                 fileCollection.clear();
             }
         }
-    }
-
-    /**
-     * Arrange listview to represent database with data of files from specific playlists
-     * @param playlistID is the playlist identification to search for files in database
-     */
-    private void arrangeFileView(int playlistID) {
-        //Reset selected object (file)
-        selectedObjFile = null;
-        //Fetch data from database
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
-        PreparedStatement getData;
-        try {
-            getData = dbConnection.prepareCall("SELECT fldMediaID, fldPosition FROM tblMediaPlaylist WHERE fldPlaylistID=" + playlistID);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        //Sort data from database
-        try {
-            ResultSet tblData = getData.executeQuery();
-            while (tblData.next()) {
-                int mediaID = tblData.getInt("fldMediaID");
-                int position = tblData.getInt("fldPosition");
-
-                //Use data to create object for observable list
-                fileCollection.add(new MediaFile(mediaID, position));
-                //Sort observable list by file position in playlist
-                fileCollection.sort(Comparator.comparing(MediaFile::getPlaylistPosition));
-
-                //Set listview of playlists to observable list
-                listViewFile.setItems(fileCollection);
-            }
-        } catch (SQLException ignore) {}
-        com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
     }
 
     /**
@@ -174,15 +110,6 @@ public class PlaylistController implements Initializable {
         resetSelectedObjects();
         clearFiles();
         showTitlePrompt(true);
-    }
-
-    /**
-     * Shows and hides text field and button to generate new playlist
-     * @param showPrompt boolean condition to show;true or hide;false
-     */
-    private void showTitlePrompt(boolean showPrompt) {
-        txtTitlePrompt.setVisible(showPrompt);
-        btnBuild.setVisible(showPrompt);
     }
 
     /**
@@ -280,6 +207,69 @@ public class PlaylistController implements Initializable {
             }
         }
     }
+    //endregion
+    //region additional assisting methods
+    /**
+     * Arrange listview to represent database with data of playlists
+     */
+    public void arrangePlaylistView() {
+        //Fetch data from database
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
+        PreparedStatement getData;
+        try {
+            getData = connection.prepareCall("SELECT * FROM tblPlaylist");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        //Sort data from database
+        try {
+            ResultSet tblData = getData.executeQuery();
+            while (tblData.next()) {
+                int playlistID = tblData.getInt("fldPlaylistID");
+                String playlistTitle = tblData.getString("fldPlaylistTitle");
+
+                //Use data to create object for observable list
+                playlistCollection.add(new Playlist(playlistID, playlistTitle));
+            }
+            //Set listview of playlists to observable list
+            listViewPlaylist.setItems(playlistCollection);
+        } catch (SQLException ignore) {}
+        dbConnection.databaseClose(connection);
+    }
+
+    /**
+     * Arrange listview to represent database with data of files from specific playlists
+     * @param playlistID is the playlist identification to search for files in database
+     */
+    private void arrangeFileView(int playlistID) {
+        //Reset selected object (file)
+        selectedObjFile = null;
+        //Fetch data from database
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
+        PreparedStatement getData;
+        try {
+            getData = connection.prepareCall("SELECT fldMediaID, fldPosition FROM tblMediaPlaylist WHERE fldPlaylistID=" + playlistID);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        //Sort data from database
+        try {
+            ResultSet tblData = getData.executeQuery();
+            while (tblData.next()) {
+                int mediaID = tblData.getInt("fldMediaID");
+                int position = tblData.getInt("fldPosition");
+
+                //Use data to create object for observable list
+                fileCollection.add(new MediaFile(mediaID, position));
+                //Sort observable list by file position in playlist
+                fileCollection.sort(Comparator.comparing(MediaFile::getPlaylistPosition));
+
+                //Set listview of playlists to observable list
+                listViewFile.setItems(fileCollection);
+            }
+        } catch (SQLException ignore) {}
+        dbConnection.databaseClose(connection);
+    }
 
     /**
      * Generates add values to use in sql-statement when adding a file to a playlist
@@ -287,6 +277,15 @@ public class PlaylistController implements Initializable {
      */
     private String getAddFileValues() {
         return "('" + selectedObjPlaylist.getPlaylistID() + "', '" + MediaFile.getSharedObj().getMediaID() + "', '" + MediaFile.getSharedObj().getPlaylistPosition() + "')";
+    }
+
+    /**
+     * Shows and hides text field and button to generate new playlist
+     * @param showPrompt boolean condition to show;true or hide;false
+     */
+    private void showTitlePrompt(boolean showPrompt) {
+        txtTitlePrompt.setVisible(showPrompt);
+        btnBuild.setVisible(showPrompt);
     }
 
     /**
@@ -317,4 +316,5 @@ public class PlaylistController implements Initializable {
         listViewFile.getItems().clear();
         Playlist.getSharedObj().resetSharedObj();
     }
+    //endregion
 }
