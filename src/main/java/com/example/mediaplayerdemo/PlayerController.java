@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -55,6 +57,8 @@ public class PlayerController implements Initializable {
         dbSorting.initializeDB("src/main/java/MediaFilesFolder");
         initializeVariables();
         setIconImages();
+
+        borderPane.setOnKeyPressed(this::handleKeyPressPlayPause);
     }
     //endregion
     //region control handlers
@@ -299,4 +303,16 @@ public class PlayerController implements Initializable {
         sliderVolume.setVisible(false);
     }
     //endregion
+
+    private void handleKeyPressPlayPause(KeyEvent event) {
+        if (event.getCode() == KeyCode.P || event.getCode() == KeyCode.SPACE) {
+            if (mediaPlaying) {
+                mediaPlaying = false;
+                mediaPlayer.pause();
+            } else {
+                mediaPlaying = true;
+                mediaPlayer.play();
+            }
+        }
+    }
 }
