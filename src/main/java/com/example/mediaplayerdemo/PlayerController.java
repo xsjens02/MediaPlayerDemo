@@ -94,6 +94,7 @@ public class PlayerController implements Initializable {
         btnFullscreen.setGraphic(imageViewFullscreen);
 
         borderPane.setOnKeyPressed(this::handleKeyPressPlayPause);
+
         btnFullscreen.setOnAction(event -> onFullScreenClick());
     }
 
@@ -319,10 +320,15 @@ public class PlayerController implements Initializable {
 
         // Toggle fullscreen
         stage.setFullScreen(!currentFullscreenState);
-        
+
         stage.getScene().setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.F) {
+            if (event.getCode() == KeyCode.ESCAPE || (event.getCode() == KeyCode.F && isFullscreenActive)) {
                 stage.setFullScreen(false);
+            }
+            else {
+                if (event.getCode() == KeyCode.F) {
+                    stage.setFullScreen(true);
+                }
             }
         });
 
@@ -330,29 +336,32 @@ public class PlayerController implements Initializable {
         stage.fullScreenProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
                 // Code to execute when exiting fullscreen
-                btnPlay.setVisible(true);
-                btnPause.setVisible(true);
-                btnStop.setVisible(true);
-                btnNext.setVisible(true);
-                btnPrevious.setVisible(true);
-                btnFullscreen.setVisible(true);
-                isFullscreenActive = false;
+                showControls();
             } else {
                 // Code to execute when entering fullscreen
-                Scene mediaScene = borderPane.getCenter().getScene();
-                double width = mediaScene.getWidth();
-                double height = mediaScene.getHeight();
-                mediaView.setFitWidth(width);
-                mediaView.setFitHeight(height);
-                btnPlay.setVisible(false);
-                btnPause.setVisible(false);
-                btnStop.setVisible(false);
-                btnNext.setVisible(false);
-                btnPrevious.setVisible(false);
-                btnFullscreen.setVisible(false);
-                isFullscreenActive = true;
+                hideControls();
             }
         });
+    }
+
+    private void showControls() {
+        btnPlay.setVisible(true);
+        btnPause.setVisible(true);
+        btnStop.setVisible(true);
+        btnNext.setVisible(true);
+        btnPrevious.setVisible(true);
+        btnFullscreen.setVisible(true);
+        isFullscreenActive = false;
+    }
+
+    private void hideControls() {
+        btnPlay.setVisible(false);
+        btnPause.setVisible(false);
+        btnStop.setVisible(false);
+        btnNext.setVisible(false);
+        btnPrevious.setVisible(false);
+        btnFullscreen.setVisible(true); // Always show fullscreen button
+        isFullscreenActive = true;
     }
 
 
