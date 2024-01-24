@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -50,7 +52,6 @@ public class PlayerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeVariables();
         dbSorting.initializeDB("src/main/java/MediaFilesFolder");
         showListControls(false);
         sliderVolume.setVisible(false);
@@ -90,6 +91,8 @@ public class PlayerController implements Initializable {
         imageViewFullscreen.setFitHeight(20);
         imageViewFullscreen.setFitWidth(20);
         btnFullscreen.setGraphic(imageViewFullscreen);
+
+        borderPane.setOnKeyPressed(this::handleKeyPressPlayPause);
     }
 
     @FXML
@@ -286,8 +289,17 @@ public class PlayerController implements Initializable {
         });
     }
 
-    private void initializeVariables() {
-
+    private void handleKeyPressPlayPause(KeyEvent event) {
+        if (event.getCode() == KeyCode.P || event.getCode() == KeyCode.SPACE) {
+            if (mediaPlaying) {
+                mediaPlaying = false;
+                mediaPlayer.pause();
+            } else {
+                mediaPlaying = true;
+                mediaPlayer.play();
+            }
+        }
     }
+
 
 }
