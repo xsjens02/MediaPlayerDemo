@@ -16,6 +16,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -45,9 +46,9 @@ public class PlayerController implements Initializable {
     private Label lblListOverview, lblFullScreen;
     @FXML
     private Slider sliderTime, sliderVolume;
-
     @FXML
     private VBox vboxParent;
+    private boolean isFullscreenActive = false;
 
 
     @Override
@@ -93,6 +94,7 @@ public class PlayerController implements Initializable {
         btnFullscreen.setGraphic(imageViewFullscreen);
 
         borderPane.setOnKeyPressed(this::handleKeyPressPlayPause);
+        btnFullscreen.setOnAction(event -> onFullScreenClick());
     }
 
     @FXML
@@ -106,7 +108,10 @@ public class PlayerController implements Initializable {
                 playMedia(false);
             }
         }
-    };
+    }
+
+    ;
+
     @FXML
     private void onFolderOption() {
         if (mediaPlaying) {
@@ -157,6 +162,7 @@ public class PlayerController implements Initializable {
             mediaPlayer.pause();
         }
     }
+
     @FXML
     private void onPlayClick() {
         if (!mediaPlaying) {
@@ -164,6 +170,7 @@ public class PlayerController implements Initializable {
             mediaPlayer.play();
         }
     }
+
     @FXML
     private void onStopClick() {
         stopMediaPlayer();
@@ -173,6 +180,7 @@ public class PlayerController implements Initializable {
     private void onSoundEnter() {
         sliderVolume.setVisible(true);
     }
+
     @FXML
     private void onSoundExit() {
         sliderVolume.setVisible(false);
@@ -182,6 +190,7 @@ public class PlayerController implements Initializable {
     private void onSliderVolumeEnter() {
         sliderVolume.setVisible(true);
     }
+
     @FXML
     private void onSliderVolumeExit() {
         sliderVolume.setVisible(false);
@@ -191,7 +200,7 @@ public class PlayerController implements Initializable {
     private void onPreviousClick() {
         if (mediaListIndex > 0) {
             stopMediaPlayer();
-            mediaListIndex --;
+            mediaListIndex--;
             playPlaylist();
         } else if (mediaListIndex == 0) {
             stopMediaPlayer();
@@ -199,6 +208,7 @@ public class PlayerController implements Initializable {
             playPlaylist();
         }
     }
+
     @FXML
     private void onNextClick() {
         if (mediaListIndex < mediaList.size() - 1) {
@@ -211,8 +221,6 @@ public class PlayerController implements Initializable {
             playPlaylist();
         }
     }
-    @FXML
-    void onFullScreenClick() {}
 
     private void playMedia(boolean autoPlay) {
         mediaPlayer = new MediaPlayer(media);
@@ -232,13 +240,13 @@ public class PlayerController implements Initializable {
     private void setSliderTime() {
         mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> {
             sliderTime.setValue(newValue.toSeconds());
-            lblTime.setText("Duration: " + (int)sliderTime.getValue() + ":" + (int)media.getDuration().toSeconds());
+            lblTime.setText("Duration: " + (int) sliderTime.getValue() + ":" + (int) media.getDuration().toSeconds());
         }));
 
-        mediaPlayer.setOnReady(() ->{
+        mediaPlayer.setOnReady(() -> {
             Duration totalDuration = media.getDuration();
             sliderTime.setMax(totalDuration.toSeconds());
-            lblTime.setText("Duration: 00:" + (int)media.getDuration().toSeconds());
+            lblTime.setText("Duration: 00:" + (int) media.getDuration().toSeconds());
         });
     }
 
@@ -246,6 +254,7 @@ public class PlayerController implements Initializable {
         mediaPlaying = false;
         mediaPlayer.stop();
     }
+
     private void playPlaylist() {
         showListControls(true);
         if (mediaListIndex == 0) {
@@ -300,6 +309,53 @@ public class PlayerController implements Initializable {
             }
         }
     }
+
+    @FXML
+    private void onFullScreenClick() {
+        Stage stage = (Stage) vboxParent.getScene().getWindow();
+
+        // Get the current fullscreen state before toggling
+        boolean currentFullscreenState = stage.isFullScreen();
+
+        // Toggle fullscreen
+        stage.setFullScreen(!currentFullscreenState);
+        
+        stage.getScene().setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.F) {
+                stage.setFullScreen(false);
+            }
+        });
+
+        // Set up a listener for changes in the fullscreen property
+        stage.fullScreenProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                // Code to execute when exiting fullscreen
+                btnPlay.setVisible(true);
+                btnPause.setVisible(true);
+                btnStop.setVisible(true);
+                btnNext.setVisible(true);
+                btnPrevious.setVisible(true);
+                btnFullscreen.setVisible(true);
+                isFullscreenActive = false;
+            } else {
+                // Code to execute when entering fullscreen
+                Scene mediaScene = borderPane.getCenter().getScene();
+                double width = mediaScene.getWidth();
+                double height = mediaScene.getHeight();
+                mediaView.setFitWidth(width);
+                mediaView.setFitHeight(height);
+                btnPlay.setVisible(false);
+                btnPause.setVisible(false);
+                btnStop.setVisible(false);
+                btnNext.setVisible(false);
+                btnPrevious.setVisible(false);
+                btnFullscreen.setVisible(false);
+                isFullscreenActive = true;
+            }
+        });
+    }
+
+
 
 
 }
