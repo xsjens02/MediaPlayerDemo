@@ -45,10 +45,9 @@ public class PlayerController implements Initializable {
     private Label lblListOverview, lblFullScreen;
     @FXML
     private Slider sliderTime, sliderVolume;
-
     @FXML
     private VBox vboxParent;
-
+    private boolean isFullscreenActive = false;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -218,22 +217,42 @@ public class PlayerController implements Initializable {
     }
     @FXML
     void onFullScreenClick() {
-        Stage stage = (Stage) vboxParent.getScene().getWindow();
-        stage.setFullScreen(true);
+        if (isFullscreenActive) {
+            Stage stage = (Stage) vboxParent.getScene().getWindow();
+            stage.setFullScreen(true);
 
 
-        Scene mediaScene = borderPane.getCenter().getScene();
-        double width = mediaScene.getWidth();
-        double height = mediaScene.getHeight();
-        mediaView.setFitWidth(width);
-        mediaView.setFitHeight(height);
-        btnPlay.setVisible(false);
-        btnPause.setVisible(false);
-        btnStop.setVisible(false);
-        btnNext.setVisible(false);
-        btnPrevious.setVisible(false);
-        btnFullscreen.setVisible(false);
+            Scene mediaScene = borderPane.getCenter().getScene();
+            double width = mediaScene.getWidth();
+            double height = mediaScene.getHeight();
+            mediaView.setFitWidth(width);
+            mediaView.setFitHeight(height);
+            btnPlay.setVisible(false);
+            btnPause.setVisible(false);
+            btnStop.setVisible(false);
+            btnNext.setVisible(false);
+            btnPrevious.setVisible(false);
+            btnFullscreen.setVisible(false);
+            isFullscreenActive = true;
+        }
+        else {
+            Stage stage = (Stage) vboxParent.getScene().getWindow();
+            stage.setFullScreen(true);
 
+
+            Scene mediaScene = borderPane.getCenter().getScene();
+            double width = mediaScene.getWidth();
+            double height = mediaScene.getHeight();
+            mediaView.setFitWidth(width);
+            mediaView.setFitHeight(height);
+            btnPlay.setVisible(true);
+            btnPause.setVisible(true);
+            btnStop.setVisible(true);
+            btnNext.setVisible(true);
+            btnPrevious.setVisible(true);
+            btnFullscreen.setVisible(true);
+            isFullscreenActive = false;
+        }
 
     }
 
