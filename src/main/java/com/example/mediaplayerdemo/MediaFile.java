@@ -3,7 +3,6 @@ package com.example.mediaplayerdemo;
 import com.coremedia.iso.IsoFile;
 import com.coremedia.iso.boxes.MovieBox;
 import javafx.scene.media.Media;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -61,6 +60,7 @@ public class MediaFile {
             this.path = file.getPath();
             this.title = generateTitle(file);
             this.duration = generateDuration(file);
+            fetchIdFromDB();
         }
     }
     //endregion
@@ -116,16 +116,6 @@ public class MediaFile {
         String mediaFile = new File(path).getAbsolutePath();
         this.media = new Media(new File(mediaFile).toURI().toString());
     }
-
-    /**
-     * Create a media object from file path
-     * @param path to file that will be converted to media object
-     * @return media object
-     */
-    public static Media createMedia(String path) {
-        String mediaFile = new File(path).getAbsolutePath();
-        return new Media(new File(mediaFile).toURI().toString());
-    }
     public void setMediaID(int mediaID) {
         this.mediaID = mediaID;
     }
@@ -147,23 +137,23 @@ public class MediaFile {
      * Get instance insert values formatted for use as value in sql-statement
      * @return instance insert values formatted
      */
-    public String getInsertValues() {
+    public String getInsertValuesSQL() {
         return "('" + this.path + "', '" + this.title + "', '" +  this.getFile() + "', '" + this.duration + "')";
     }
 
     /**
-     * Get instance delete values formatted for use as value in sql-statement
-     * @return instance delete values formatted
+     * Get instance title value value formatted for use as value in sql-statement
+     * @return instance title value formatted
      */
-    public String getDeleteValuesSQL() {
-        return "'" + this.mediaID + "'";
+    public String getTitleValueSQL() {
+        return "'" + this.title + "'";
     }
 
     /**
-     * Get instance path values formatted for use as value in sql-statement
-     * @return instance path values formatted
+     * Get instance path value formatted for use as value in sql-statement
+     * @return instance path value formatted
      */
-    public String getPathValuesSQL() {
+    public String getPathValueSQL() {
         return "'" + this.path + "'";
     }
 
@@ -212,10 +202,31 @@ public class MediaFile {
     }
 
     /**
+     * Setting instance title from database
+     */
+    private void fetchIdFromDB() {
+        String sqlSpecifier = "WHERE fldPath=" + this.getPathValueSQL() + " and fldTitle=" + this.getTitleValueSQL() + " and fldDuration=" + this.getDuration();
+        int ID = dbSorting.getIntDataFromDB("tblMedia", "fldMediaID", sqlSpecifier);
+        if (ID != 0) {
+            this.mediaID = ID;
+        }
+    }
+
+    /**
      * Reset media of an instance
      */
     public void resetMedia() {
         this.media = null;
+    }
+
+    /**
+     * Create a media object from file path
+     * @param path to file that will be converted to media object
+     * @return media object
+     */
+    public static Media createMedia(String path) {
+        String mediaFile = new File(path).getAbsolutePath();
+        return new Media(new File(mediaFile).toURI().toString());
     }
 
     /**
