@@ -33,11 +33,15 @@ public class dbSorting {
      * Reads folder for mp4-files then adds them to arraylist
      */
     private static void initReadFiles() {
+        //Fetch data from folder
         File[] files = folder.listFiles();
+        //If file is valid then proceed to process file
         if (files != null) {
             for (File file : files) {
+                //If file is valid to database then add to array of folder files
                 if (file.isFile() && file.getName().toLowerCase().endsWith("mp4")) {
                     folderFiles.add(file);
+                    //Else delete file from folder
                 } else {
                     try {
                         Files.delete(Path.of(file.getPath()));
@@ -51,6 +55,7 @@ public class dbSorting {
      * Reads database for mp4-files then adds them to arraylist
      */
     private static void initReadDB() {
+        //Fetch data from database
         Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         PreparedStatement getData;
         try {
@@ -58,29 +63,39 @@ public class dbSorting {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        //Sort data from database
         try {
             ResultSet dataResult = getData.executeQuery();
             while (dataResult.next()) {
                 int id = dataResult.getInt("fldMediaID");
                 String path = dataResult.getString("fldPath");
+                //If record from database contains a path then process path
                 if (path != null) {
                     path = path.trim();
+                    //Create a new file with path
                     File file = new File(path);
+                    //If file is valid then add to array of database files
                     if (file.isFile() && file.getName().toLowerCase().endsWith("mp4")) {
                         dbFiles.add(file);
+                        //Else delete record from database
                     } else {
+                        //If record id is present in association table then delete from that table first
                         if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", id)) {
                             String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + id;
                             deleteFromDB(sqlSpecifier);
                         }
+                        //Delete from database
                         String sqlSpecifier = "tblMedia WHERE fldMediaID=" + id;
                         deleteFromDB(sqlSpecifier);
                     }
+                    //Else delete record from database
                 } else {
+                    //If record id is present in association table then delete from that table first
                     if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", id)) {
                         String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + id;
                         deleteFromDB(sqlSpecifier);
                     }
+                    //Delete from database
                     String sqlSpecifier = "tblMedia WHERE fldMediaID=" + id;
                     deleteFromDB(sqlSpecifier);
                 }
@@ -93,6 +108,7 @@ public class dbSorting {
      * Sorts database and folder to align content
      */
     private static void initSortDB() {
+        //
         for (File folderFile : folderFiles) {
             boolean presenceInDB = false;
             for (File dbFile : dbFiles) {

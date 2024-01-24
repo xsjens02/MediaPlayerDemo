@@ -303,7 +303,6 @@ public class PlayerController implements Initializable {
         sliderVolume.setVisible(false);
     }
     //endregion
-
     private void handleKeyPressPlayPause(KeyEvent event) {
         if (event.getCode() == KeyCode.P || event.getCode() == KeyCode.SPACE) {
             if (mediaPlaying) {
