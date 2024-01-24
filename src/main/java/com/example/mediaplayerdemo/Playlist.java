@@ -1,7 +1,6 @@
 package com.example.mediaplayerdemo;
 
 import javafx.scene.media.Media;
-
 import java.util.ArrayList;
 
 public class Playlist {

@@ -26,7 +26,7 @@ public class dbSorting {
         folder = new File(folderPath);
         initReadFiles();
         initReadDB();
-        initArrangeDB();
+        initSortDB();
     }
 
     /**
@@ -38,6 +38,10 @@ public class dbSorting {
             for (File file : files) {
                 if (file.isFile() && file.getName().toLowerCase().endsWith("mp4")) {
                     folderFiles.add(file);
+                } else {
+                    try {
+                        Files.delete(Path.of(file.getPath()));
+                    } catch (IOException ignore) {}
                 }
             }
         }
@@ -47,37 +51,42 @@ public class dbSorting {
      * Reads database for mp4-files then adds them to arraylist
      */
     private static void initReadDB() {
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         PreparedStatement getData;
         try {
-            getData = dbConnection.prepareCall("SELECT fldPath FROM tblMedia");
+            getData = connection.prepareCall("SELECT fldMediaID, fldPath FROM tblMedia");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         try {
             ResultSet dataResult = getData.executeQuery();
             while (dataResult.next()) {
-                String path = dataResult.getString("fldPath").trim();
-                File file = new File(path);
-                if (file.isFile() && file.getName().toLowerCase().endsWith("mp4")) {
-                    dbFiles.add(file);
+                int id = dataResult.getInt("fldMediaID");
+                String path = dataResult.getString("fldPath");
+                if (path != null) {
+                    path = path.trim();
+                    File file = new File(path);
+                    if (file.isFile() && file.getName().toLowerCase().endsWith("mp4")) {
+                        dbFiles.add(file);
+                    } else {
+                        if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", id)) {
+                            String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + id;
+                            deleteFromDB(sqlSpecifier);
+                        }
+                        String sqlSpecifier = "tblMedia WHERE fldMediaID=" + id;
+                        deleteFromDB(sqlSpecifier);
+                    }
+                } else {
+                    if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", id)) {
+                        String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + id;
+                        deleteFromDB(sqlSpecifier);
+                    }
+                    String sqlSpecifier = "tblMedia WHERE fldMediaID=" + id;
+                    deleteFromDB(sqlSpecifier);
                 }
             }
         } catch (SQLException ignore) {}
-        com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
-    }
-
-    /**
-     * Determines how to align content of database with content of folder
-     */
-    private static void initArrangeDB() {
-        if (!folderFiles.isEmpty() && !dbFiles.isEmpty()) {
-            initSortDB();
-        } else if (folderFiles.isEmpty()) {
-            resetDB("tblMedia");
-        } else {
-            initSortDB();
-        }
+        dbConnection.databaseClose(connection);
     }
 
     /**
@@ -97,35 +106,44 @@ public class dbSorting {
             }
             if (!presenceInDB) {
                 MediaFile addFile = new MediaFile(folderFile);
-                String sqlSpecifier = "tblMedia (fldPath, fldTitle, fldFormat, fldDuration) VALUES " + addFile.getInsertValues();
+                String sqlSpecifier = "tblMedia (fldPath, fldTitle, fldFormat, fldDuration) VALUES " + addFile.getInsertValuesSQL();
                 addToDB(sqlSpecifier);
                 dbFiles.add(folderFile);
+            } else {
+                MediaFile updateFile = new MediaFile(folderFile);
+                String actualTitle = updateFile.getTitle();
+                String sqlSpecifierGet = "WHERE fldPath=" + updateFile.getPathValueSQL();
+                String dbTitle = getStringDataFromDB("tblMedia", "fldTitle", sqlSpecifierGet);
+                if (dbTitle != null) {
+                    dbTitle = dbTitle.trim();
+                    if (!actualTitle.equals(dbTitle)) {
+                        String sqlSpecifierUpdate = "WHERE fldPath=" + updateFile.getPathValueSQL();
+                        updateStringInDB("tblMedia", "fldTitle", actualTitle, sqlSpecifierUpdate);
+                    }
+                } else {
+                    String sqlSpecifierUpdate = "WHERE fldPath=" + updateFile.getPathValueSQL();
+                    updateStringInDB("tblMedia", "fldTitle", actualTitle, sqlSpecifierUpdate);
+                }
             }
         }
 
         for (File dbFile : dbFiles) {
-            if (!dbFile.isFile()) {
-                MediaFile deleteFile = new MediaFile(dbFile);
-                String sqlSpecifier = "tblMedia WHERE fldPath=" + deleteFile.getDeleteValuesSQL();
-                deleteFromDB(sqlSpecifier);
-            } else {
-                boolean presenceInFolder = false;
-                for (File folderFile : folderFiles) {
-                    long misMatchVal = getMisMatchVal(dbFile, folderFile);
-                    if (misMatchVal == -1) {
-                        presenceInFolder = true;
-                        break;
-                    }
+            boolean presenceInFolder = false;
+            for (File folderFile : folderFiles) {
+                long misMatchVal = getMisMatchVal(dbFile, folderFile);
+                if (misMatchVal == -1) {
+                    presenceInFolder = true;
+                    break;
                 }
-                if (!presenceInFolder) {
-                    MediaFile deleteFile = new MediaFile(dbFile);
-                    if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", deleteFile.getMediaID())) {
-                        String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + deleteFile.getMediaID();
-                        deleteFromDB(sqlSpecifier);
-                    }
-                    String sqlSpecifier = "tblMedia WHERE fldPath=" + deleteFile.getDeleteValuesSQL();
+            }
+            if (!presenceInFolder) {
+                MediaFile deleteFile = new MediaFile(dbFile);
+                if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", deleteFile.getMediaID())) {
+                    String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + deleteFile.getMediaID();
                     deleteFromDB(sqlSpecifier);
                 }
+                String sqlSpecifier = "tblMedia WHERE fldPath=" + deleteFile.getPathValueSQL();
+                deleteFromDB(sqlSpecifier);
             }
         }
     }
@@ -136,15 +154,15 @@ public class dbSorting {
      * @param sqlSpecifier specifies where adn what data to delete
      */
     public static void deleteFromDB(String sqlSpecifier) {
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         PreparedStatement deleteData;
         try {
-            deleteData = dbConnection.prepareCall("DELETE FROM " + sqlSpecifier);
+            deleteData = connection.prepareCall("DELETE FROM " + sqlSpecifier);
             deleteData.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
+            dbConnection.databaseClose(connection);
         }
     }
 
@@ -153,15 +171,15 @@ public class dbSorting {
      * @param sqlSpecifier specifies where and what data to add
      */
     public static void addToDB(String sqlSpecifier) {
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         PreparedStatement addData;
         try {
-            addData = dbConnection.prepareCall("INSERT INTO " + sqlSpecifier);
+            addData = connection.prepareCall("INSERT INTO " + sqlSpecifier);
             addData.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
+            dbConnection.databaseClose(connection);
         }
     }
 
@@ -173,15 +191,15 @@ public class dbSorting {
      * @param sqlSpecifier where to update data
      */
     public static void updateStringInDB(String table, String field, String newValue, String sqlSpecifier) {
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         PreparedStatement addData;
         try {
-            addData = dbConnection.prepareCall("UPDATE " + table + " SET " + field + "=" + newValue + " " + sqlSpecifier);
+            addData = connection.prepareCall("UPDATE " + table + " SET " + field + "='" + newValue + "' " + sqlSpecifier);
             addData.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
+            dbConnection.databaseClose(connection);
         }
     }
 
@@ -190,15 +208,15 @@ public class dbSorting {
      * @param resetTable is the table to reset
      */
     public static void resetDB(String resetTable) {
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         PreparedStatement deleteData;
         try {
-            deleteData = dbConnection.prepareCall("DELETE FROM " + resetTable);
+            deleteData = connection.prepareCall("DELETE FROM " + resetTable);
             deleteData.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
+            dbConnection.databaseClose(connection);
         }
     }
 
@@ -210,11 +228,11 @@ public class dbSorting {
      * @return integer data (return 0 if no data found)
      */
     public static int getIntDataFromDB(String searchTable, String searchField, String sqlSpecifier) {
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         int data = 0;
         PreparedStatement getData;
         try {
-            getData = dbConnection.prepareCall("SELECT " + searchField + " FROM " + searchTable + " " + sqlSpecifier);
+            getData = connection.prepareCall("SELECT " + searchField + " FROM " + searchTable + " " + sqlSpecifier);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -224,7 +242,7 @@ public class dbSorting {
                 data = tblData.getInt(searchField);
             }
         } catch (SQLException ignore) {}
-        com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
+        dbConnection.databaseClose(connection);
         return data;
     }
 
@@ -236,7 +254,7 @@ public class dbSorting {
      * @return String data (return empty if no data found)
      */
     public static String getStringDataFromDB(String searchTable, String searchField, String sqlSpecifier) {
-        Connection connection = dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         String data = "";
         PreparedStatement getData;
         try {
@@ -250,7 +268,7 @@ public class dbSorting {
                 data = tblData.getString(searchField);
             }
         } catch (SQLException ignore) {}
-        com.example.mediaplayerdemo.dbConnection.databaseClose(connection);
+        dbConnection.databaseClose(connection);
         return data;
     }
 
@@ -263,10 +281,10 @@ public class dbSorting {
      */
     public static boolean isDataPresentInDB(String tblToSearch, String searchField, int searchData) {
         boolean isDataPresent = false;
-        Connection dbConnection = com.example.mediaplayerdemo.dbConnection.databaseConnection(com.example.mediaplayerdemo.dbConnection.setProps(), com.example.mediaplayerdemo.dbConnection.URL);
+        Connection connection = dbConnection.databaseConnection(dbConnection.setProps(), dbConnection.URL);
         PreparedStatement getData;
         try {
-            getData = dbConnection.prepareCall("SELECT * FROM " + tblToSearch);
+            getData = connection.prepareCall("SELECT * FROM " + tblToSearch);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -281,7 +299,7 @@ public class dbSorting {
             }
         } catch (SQLException ignore) {}
         finally {
-            com.example.mediaplayerdemo.dbConnection.databaseClose(dbConnection);
+            dbConnection.databaseClose(connection);
         }
         return isDataPresent;
     }
