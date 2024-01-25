@@ -61,11 +61,11 @@ public class PlayerController implements Initializable {
         initializeVariables();
         setIconImages();
 
-        Platform.runLater(() -> { // use runLater to introduce wait so it does not try to grab something that is not loaded yet
-            Stage stage = (Stage) vboxParent.getScene().getWindow();
-            borderPane.setOnKeyPressed(this::handleKeyPressPlayPause);
-            btnFullscreen.setOnAction(event -> onFullScreenClick());
-            setupKeyEventHandler(stage);
+        Platform.runLater(() -> { // use runLater to introduce wait, so it does not try to grab something that is not loaded yet
+            Stage stage = (Stage) vboxParent.getScene().getWindow(); // assign the stage
+            borderPane.setOnKeyPressed(this::handleKeyPressPlayPause); // integrate the keypress for play/pause
+            btnFullscreen.setOnAction(event -> onFullScreenClick()); // integrate the fullscreen button event
+            setupKeyEventHandler(stage); // integrate the fullscreen enter/exit keybind
         });
     }
     //endregion
