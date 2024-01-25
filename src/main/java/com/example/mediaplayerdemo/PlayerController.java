@@ -56,16 +56,11 @@ public class PlayerController implements Initializable {
     //endregion
     //region initialize
 
-    /**
-     * Initialises certain things when the application starts
-     * @param url filstien til ressourcer, FXML mm.
-     * @param resourceBundle ekstra ressourcer som tilknyttes initialise
-     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        dbSorting.initializeDB("src/main/java/MediaFilesFolder");
-        initializeVariables();
-        setIconImages();
+        dbSorting.initializeDB("src/main/java/MediaFilesFolder"); // assign the path to the media folder
+        initializeVariables(); // initialise further variables
+        setIconImages(); // load all the images in place of buttons
 
         Platform.runLater(() -> { // use runLater to introduce wait, so it does not try to grab something that is not loaded yet
             Stage stage = (Stage) vboxParent.getScene().getWindow(); // assign the stage
