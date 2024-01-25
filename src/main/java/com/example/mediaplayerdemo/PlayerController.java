@@ -211,7 +211,7 @@ public class PlayerController implements Initializable {
     }
 
     /**
-     * Handles going to the previous track in the playlist using the button.
+     * Handles going to the previous track in the playlist using the button controller.
      */
     @FXML
     private void onPreviousClick() {
@@ -225,6 +225,10 @@ public class PlayerController implements Initializable {
             playPlaylist();
         }
     }
+
+    /**
+     * Handles going to the next track in the playlist when the button controller is pressed.
+     */
     @FXML
     private void onNextClick() {
         if (mediaListIndex < mediaList.size() - 1) {
@@ -249,6 +253,12 @@ public class PlayerController implements Initializable {
 
     //endregion
     //region additional assisting methods
+
+    /**
+     * Creates the media you have selected and enables it.
+     * It enables a single media file for playing.
+     * @param autoPlay a flag to allow the media to start automatically once a media is selected.
+     */
     private void playMedia(boolean autoPlay) {
         mediaPlayer = new MediaPlayer(media);
         mediaView.setMediaPlayer(mediaPlayer);
@@ -263,6 +273,11 @@ public class PlayerController implements Initializable {
         mediaView.setFitHeight(height);
     }
 
+
+    /**
+     * Start the selected playlist. Playing the media in the order it is assigned in the playlist.
+     * It prepares the media array for playing.
+     */
     private void playPlaylist() {
         showListControls(true);
         if (mediaListIndex == 0) {
@@ -293,11 +308,18 @@ public class PlayerController implements Initializable {
         }
     }
 
+    /**
+     * Handles stopping the current media from playing.
+     */
     private void stopMediaPlayer() {
         mediaPlaying = false;
         mediaPlayer.stop();
     }
 
+
+    /**
+     * Initialises the duration slider of the media. This is the slider controller that tracks the media's duration.
+     */
     private void setSliderTime() {
         mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> {
             sliderTime.setValue(newValue.toSeconds());
@@ -311,18 +333,31 @@ public class PlayerController implements Initializable {
         });
     }
 
+
+    /**
+     * Initialises the volume slider controller.
+     */
     private void setSliderVolume() {
         sliderVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
             mediaPlayer.setVolume((Double) newValue);
         });
     }
 
+    /**
+     * Handles hiding and displaying a select list of controllers.
+     * @param showControls handles showing or hiding the previous and next buttonns, and the listview.
+     */
     private void showListControls(boolean showControls) {
         btnNext.setVisible(showControls);
         btnPrevious.setVisible(showControls);
         lblListOverview.setVisible(showControls);
     }
 
+
+    /**
+     * Handles displaying images in place of the buttons.
+     * This happens for all the displayed images, pause, play, et cetera.
+     */
     private void setIconImages() {
         Image imagePause = new Image(getClass().getResource("/Icon/pause.png").toExternalForm());
         ImageView imageViewPause = new ImageView(imagePause);
@@ -361,6 +396,10 @@ public class PlayerController implements Initializable {
         btnFullscreen.setGraphic(imageViewFullscreen);
     }
 
+
+    /**
+     * Initialises certain variables, and triggers the hiding of a few controls for later use.
+     */
     private void initializeVariables() {
         media = null;
         mediaPlayer = null;
@@ -370,6 +409,12 @@ public class PlayerController implements Initializable {
         sliderVolume.setVisible(false);
     }
     //endregion
+
+    /**
+     * The pause/play keybind function.
+     * The code that is triggered on space/P is to stop, or if already stopped; resume the media.
+     * @param event the keypress event. Listens for when a key with a certain keycode is pressed to trigger the code.
+     */
     private void handleKeyPressPlayPause(KeyEvent event) {
         if (event.getCode() == KeyCode.P || event.getCode() == KeyCode.SPACE) {
             if (mediaPlaying) {
