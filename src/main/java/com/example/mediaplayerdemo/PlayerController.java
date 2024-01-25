@@ -55,6 +55,12 @@ public class PlayerController implements Initializable {
 
     //endregion
     //region initialize
+
+    /**
+     * Initialises certain things when the application starts
+     * @param url filstien til ressourcer, FXML mm.
+     * @param resourceBundle ekstra ressourcer som tilknyttes initialise
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         dbSorting.initializeDB("src/main/java/MediaFilesFolder");
@@ -70,6 +76,11 @@ public class PlayerController implements Initializable {
     }
     //endregion
     //region control handlers
+
+    /**
+     * When you select the choose from drive option in the scene, a new scene opens allowing you to select a file.
+     * If the selected file is not .mp4 it is rejected.
+     */
     @FXML
     private void onDriveOption() {
         FileChooser fileChooser = new FileChooser();
@@ -82,6 +93,11 @@ public class PlayerController implements Initializable {
             }
         }
     };
+
+
+    /**
+     * Alternatively, when you click choose from folder, it loads a new scene for further handling.
+     */
     @FXML
     private void onFolderOption() {
         if (mediaPlaying) {
@@ -99,6 +115,10 @@ public class PlayerController implements Initializable {
         }
     }
 
+    /**
+     * When you choose the playlist option, it loads a new scene for handling playlists.
+     * If you have chosen a playlist, and the scene is exited, it will play, otherwise not.
+     */
     @FXML
     private void onPlaylistOption() {
         if (mediaPlaying) {
@@ -116,6 +136,9 @@ public class PlayerController implements Initializable {
         }
     }
 
+    /**
+     * Allows the user to interact and skip around in the media using the slider controller.
+     */
     @FXML
     private void onSliderTimePressed() {
         if (mediaPlayer != null) {
@@ -125,6 +148,9 @@ public class PlayerController implements Initializable {
         }
     }
 
+    /**
+     * Handles pausing the media when the pause button is clicked.
+     */
     @FXML
     void onPauseClick() {
         if (mediaPlaying) {
@@ -132,6 +158,10 @@ public class PlayerController implements Initializable {
             mediaPlayer.pause();
         }
     }
+
+    /**
+     * Handles playing the media when the play button is clicked.
+     */
     @FXML
     private void onPlayClick() {
         if (!mediaPlaying) {
@@ -139,29 +169,50 @@ public class PlayerController implements Initializable {
             mediaPlayer.play();
         }
     }
+
+    /**
+     * Handles stopping the media when the stop button is clicked.
+     */
     @FXML
     private void onStopClick() {
         stopMediaPlayer();
     }
 
+    /**
+     * Handles making the sound slider visible when hovering near the sound icon.
+     */
     @FXML
     private void onSoundEnter() {
         sliderVolume.setVisible(true);
     }
+
+    /**
+     * Handles hiding the sound slider when no longer hovering near the sound icon.
+     */
     @FXML
     private void onSoundExit() {
         sliderVolume.setVisible(false);
     }
 
+    /**
+     * Handles displaying the sound slider controller after making it visible by hovering over the icon.
+     */
     @FXML
     private void onSliderVolumeEnter() {
         sliderVolume.setVisible(true);
     }
+
+    /**
+     * Handles hiding the sound slider controller after making it visible by hovering over the icon when leaving it.
+     */
     @FXML
     private void onSliderVolumeExit() {
         sliderVolume.setVisible(false);
     }
 
+    /**
+     * Handles going to the previous track in the playlist using the button.
+     */
     @FXML
     private void onPreviousClick() {
         if (mediaListIndex > 0) {
