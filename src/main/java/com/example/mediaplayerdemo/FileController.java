@@ -152,9 +152,6 @@ public class FileController implements Initializable {
             currentStage.close();
         }
     }
-
-    @FXML
-    private void setTxtSearchField(){}
     //endregion
     //region additional assisting methods
     /**
@@ -204,6 +201,9 @@ public class FileController implements Initializable {
         dbConnection.databaseClose(connection);
     }
 
+    /**
+     * Initializes thread that runs every 500milliseconds to update search result based on current input
+     */
     private void startSearchTask() {
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(() -> {
@@ -220,6 +220,9 @@ public class FileController implements Initializable {
         }, 0, 500, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Ends thread process that update search result based on current input
+     */
     private void stopSearchTask() {
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdownNow();
