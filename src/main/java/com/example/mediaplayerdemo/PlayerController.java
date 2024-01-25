@@ -58,8 +58,8 @@ public class PlayerController implements Initializable {
 
     /**
      * Initialises certain things when the application starts
-     * @param url filstien til ressourcer, FXML mm.
-     * @param resourceBundle ekstra ressourcer som tilknyttes initialise
+     * @param url file path to resources, FXML mm
+     * @param resourceBundle additional resources attached into initialize
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -71,7 +71,7 @@ public class PlayerController implements Initializable {
             Stage stage = (Stage) vboxParent.getScene().getWindow(); // assign the stage
             borderPane.setOnKeyPressed(this::handleKeyPressPlayPause); // integrate the keypress for play/pause
             btnFullscreen.setOnAction(event -> onFullScreenClick()); // integrate the fullscreen button event
-            setupKeyEventHandler(stage); // integrate the fullscreen enter/exit keybind
+            setupKeyEventHandler(stage); // integrate the fullscreen enter/exit key bind
         });
     }
     //endregion
@@ -238,6 +238,15 @@ public class PlayerController implements Initializable {
         }
     }
 
+    /**
+     * Handles entering fullscreen when the controller button for it is clicked.
+     */
+    @FXML
+    private void onFullScreenClick() {
+        Stage stage = (Stage) vboxParent.getScene().getWindow();
+        toggleFullScreen(stage);
+    }
+
     //endregion
     //region additional assisting methods
     private void playMedia(boolean autoPlay) {
@@ -373,16 +382,6 @@ public class PlayerController implements Initializable {
         }
     }
 
-
-    /**
-     * Handles entering fullscreen when the controller button for it is clicked.
-     */
-    @FXML
-    private void onFullScreenClick() {
-        Stage stage = (Stage) vboxParent.getScene().getWindow();
-        toggleFullScreen(stage);
-    }
-
     /**
      * Handles changing between fullscreen and not when clicking the button controller.
      * @param stage this is simply a parameter for the stage itself, the program.
@@ -403,7 +402,7 @@ public class PlayerController implements Initializable {
     }
 
     /**
-     * Handles entering and exiting fullscreen using the "F" or "escape" keybinds.
+     * Handles entering and exiting fullscreen using the "F" or "escape" key binds.
      * @param stage this is simply a parameter for the stage itself, the program.
      */
     private void setupKeyEventHandler(Stage stage) {

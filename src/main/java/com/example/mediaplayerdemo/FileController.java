@@ -50,6 +50,11 @@ public class FileController implements Initializable {
     private ScheduledExecutorService executorService;
     //endregion
     //region initialize
+    /**
+     * Initialises certain things when the application starts
+     * @param url file path to resources, FXML mm
+     * @param resourceBundle additional resources attached into initialize
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeVariables();
