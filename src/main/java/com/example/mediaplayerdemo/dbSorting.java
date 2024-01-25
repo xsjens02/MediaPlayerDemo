@@ -74,12 +74,12 @@ public class dbSorting {
                     path = path.trim();
                     //Create a new file with path
                     File file = new File(path);
-                    //If file is valid then add to array of database files
+                    //If file is valid add to array of database files
                     if (file.isFile() && file.getName().toLowerCase().endsWith("mp4")) {
                         dbFiles.add(file);
                         //Else delete record from database
                     } else {
-                        //If record id is present in association table then delete from that table first
+                        //If record id is present in association table delete from that table first
                         if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", id)) {
                             String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + id;
                             deleteFromDB(sqlSpecifier);
@@ -90,7 +90,7 @@ public class dbSorting {
                     }
                     //Else delete record from database
                 } else {
-                    //If record id is present in association table then delete from that table first
+                    //If record id is present in association table delete from that table first
                     if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", id)) {
                         String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + id;
                         deleteFromDB(sqlSpecifier);
@@ -108,8 +108,9 @@ public class dbSorting {
      * Sorts database and folder to align content
      */
     private static void initSortDB() {
-        //
+        //Fetch folder file from array
         for (File folderFile : folderFiles) {
+            //Check if file is present in database
             boolean presenceInDB = false;
             for (File dbFile : dbFiles) {
                 if (dbFile.isFile()) {
@@ -120,30 +121,37 @@ public class dbSorting {
                     }
                 }
             }
+            //If file is not present add file to database
             if (!presenceInDB) {
                 MediaFile addFile = new MediaFile(folderFile);
                 String sqlSpecifier = "tblMedia (fldPath, fldTitle, fldFormat, fldDuration) VALUES " + addFile.getInsertValuesSQL();
                 addToDB(sqlSpecifier);
                 dbFiles.add(folderFile);
+                //If file is present check if title in database correspond with actual file title
             } else {
                 MediaFile updateFile = new MediaFile(folderFile);
                 String actualTitle = updateFile.getTitle();
                 String sqlSpecifierGet = "WHERE fldPath=" + updateFile.getPathValueSQL();
                 String dbTitle = getStringDataFromDB("tblMedia", "fldTitle", sqlSpecifierGet);
+                //If database title is not empty check if it matches with actual file title
                 if (dbTitle != null) {
                     dbTitle = dbTitle.trim();
+                    //If title from database does not correspond with actual file title then update in database
                     if (!actualTitle.equals(dbTitle)) {
                         String sqlSpecifierUpdate = "WHERE fldPath=" + updateFile.getPathValueSQL();
                         updateStringInDB("tblMedia", "fldTitle", actualTitle, sqlSpecifierUpdate);
                     }
                 } else {
+                    //Else update empty title field in database to be title of file
                     String sqlSpecifierUpdate = "WHERE fldPath=" + updateFile.getPathValueSQL();
                     updateStringInDB("tblMedia", "fldTitle", actualTitle, sqlSpecifierUpdate);
                 }
             }
         }
 
+        //Fetch database file from array
         for (File dbFile : dbFiles) {
+            //Check if file is present in folder
             boolean presenceInFolder = false;
             for (File folderFile : folderFiles) {
                 long misMatchVal = getMisMatchVal(dbFile, folderFile);
@@ -152,12 +160,15 @@ public class dbSorting {
                     break;
                 }
             }
+            //If file is not present delete file from database
             if (!presenceInFolder) {
                 MediaFile deleteFile = new MediaFile(dbFile);
+                //If file is present in association table delete from that table first
                 if (isDataPresentInDB("tblMediaPlaylist", "fldMediaID", deleteFile.getMediaID())) {
                     String sqlSpecifier = "tblMediaPlaylist WHERE fldMediaID=" + deleteFile.getMediaID();
                     deleteFromDB(sqlSpecifier);
                 }
+                //Delete from database
                 String sqlSpecifier = "tblMedia WHERE fldPath=" + deleteFile.getPathValueSQL();
                 deleteFromDB(sqlSpecifier);
             }
