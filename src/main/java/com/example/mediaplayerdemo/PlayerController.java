@@ -56,22 +56,17 @@ public class PlayerController implements Initializable {
     //endregion
     //region initialize
 
-    /**
-     * Initialises certain things when the application starts
-     * @param url file path to resources, FXML mm
-     * @param resourceBundle additional resources attached into initialize
-     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        dbSorting.initializeDB("src/main/java/MediaFilesFolder");
-        initializeVariables();
-        setIconImages();
+        dbSorting.initializeDB("src/main/java/MediaFilesFolder"); // assign the path to the media folder
+        initializeVariables(); // initialise further variables
+        setIconImages(); // load all the images in place of buttons
 
         Platform.runLater(() -> { // use runLater to introduce wait, so it does not try to grab something that is not loaded yet
             Stage stage = (Stage) vboxParent.getScene().getWindow(); // assign the stage
             borderPane.setOnKeyPressed(this::handleKeyPressPlayPause); // integrate the keypress for play/pause
             btnFullscreen.setOnAction(event -> onFullScreenClick()); // integrate the fullscreen button event
-            setupKeyEventHandler(stage); // integrate the fullscreen enter/exit key bind
+            setupKeyEventHandler(stage); // integrate the fullscreen enter/exit keybind
         });
     }
     //endregion
@@ -240,15 +235,6 @@ public class PlayerController implements Initializable {
             mediaListIndex = 0;
             playPlaylist();
         }
-    }
-
-    /**
-     * Handles entering fullscreen when the controller button for it is clicked.
-     */
-    @FXML
-    private void onFullScreenClick() {
-        Stage stage = (Stage) vboxParent.getScene().getWindow();
-        toggleFullScreen(stage);
     }
 
     //endregion
@@ -480,4 +466,87 @@ public class PlayerController implements Initializable {
         sliderVolume.setVisible(false);
     }
     //endregion
+
+
+    /**
+     * The pause/play keybind function.
+     * The code that is triggered on space/P is to stop, or if already stopped; resume the media.
+     * @param event the keypress event. Listens for when a key with a certain keycode is pressed to trigger the code.
+     */
+    private void handleKeyPressPlayPause(KeyEvent event) {
+        if (event.getCode() == KeyCode.P || event.getCode() == KeyCode.SPACE) {
+            if (mediaPlaying) {
+                mediaPlaying = false;
+                mediaPlayer.pause();
+            } else {
+                mediaPlaying = true;
+                mediaPlayer.play();
+            }
+        }
+    }
+
+
+    /**
+     * Handles entering fullscreen when the controller button for it is clicked.
+     */
+    @FXML
+    private void onFullScreenClick() {
+        Stage stage = (Stage) vboxParent.getScene().getWindow();
+        toggleFullScreen(stage);
+    }
+
+    /**
+     * Handles changing between fullscreen and not when clicking the button controller.
+     * @param stage this is simply a parameter for the stage itself, the program.
+     */
+    private void toggleFullScreen(Stage stage) {
+        // Get the current fullscreen state
+        boolean currentFullscreenState = stage.isFullScreen();
+
+        // Toggle fullscreen
+        stage.setFullScreen(!currentFullscreenState);
+
+        // Adjust controls based on the new fullscreen state
+        if (stage.isFullScreen()) {
+            hideControls();
+        } else {
+            showControls();
+        }
+    }
+
+    /**
+     * Handles entering and exiting fullscreen using the "F" or "escape" keybinds.
+     * @param stage this is simply a parameter for the stage itself, the program.
+     */
+    private void setupKeyEventHandler(Stage stage) {
+        stage.getScene().setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.F && !stage.isFullScreen()) {
+                stage.setFullScreen(true);
+                hideControls();
+            } else if (event.getCode() == KeyCode.ESCAPE && stage.isFullScreen() || event.getCode() == KeyCode.F && stage.isFullScreen()) {
+                stage.setFullScreen(false);
+                showControls();
+            }
+        });
+    }
+
+    /**
+     * Shows the controls in the scene
+     */
+    private void showControls() {
+        btnPlay.setVisible(true);
+        btnPause.setVisible(true);
+        btnStop.setVisible(true);
+        btnFullscreen.setVisible(true);
+    }
+
+    /**
+     * Hides the controls in the scene
+     */
+    private void hideControls() {
+        btnPlay.setVisible(false);
+        btnPause.setVisible(false);
+        btnStop.setVisible(false);
+        btnFullscreen.setVisible(true);
+    }
 }
